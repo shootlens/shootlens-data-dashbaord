@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { Bar, Line } from "react-chartjs-2";
+import { COLORS } from "../constants";
 
 ChartJS.register(
   CategoryScale,
@@ -184,9 +185,9 @@ const mainData = {
   };
 
   return (
-    <div className="p-6 bg-gray-50 rounded-2xl shadow space-y-6">
+    <div className="py-6">
       {/* Tabs Header */}
-      <div className="flex border-b border-gray-200">
+      <div className={`flex border-b border-[${COLORS.border}]`}>
         <button
           onClick={() => setActiveTab("results")}
           className={`px-4 py-2 text-sm font-medium ${
@@ -209,9 +210,8 @@ const mainData = {
         </button>
       </div>
 
-      {/* Tab Content */}
       {activeTab === "results" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6">
           <ChartCard title="Sales, Expenses, Operating Profit, OPM %" chart={<Bar data={mainData} options={options} />} />
           <ChartCard title="Operating Profit Margin (%)" chart={<Line data={opmData} options={options} />} />
           <ChartCard title="Net Profit vs Other Income" chart={<Bar data={profitData} options={options} />} />
@@ -220,7 +220,7 @@ const mainData = {
       )}
 
       {activeTab === "holding" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6">
           <ChartCard title="Revenue vs Expenses (Core Profitability View)" chart={<Bar data={revenueVsExpenses} options={options} />} />
           <ChartCard title="Operating Profit vs Net Profit" chart={<Bar data={opVsNetProfit} options={options} />} />
           <ChartCard title="EPS Growth (Earnings Power Trend)" chart={<Line data={epsGrowth} options={options} />} />
@@ -230,9 +230,8 @@ const mainData = {
   );
 };
 
-// ✅ Reusable Chart Card
 const ChartCard = ({ title, chart }) => (
-  <div className="bg-white shadow-md rounded-2xl p-4">
+  <div className={`bg-white rounded-[10px] border border-[${COLORS.border}] p-4`}>
     <h3 className="text-lg font-medium mb-2 text-gray-700">{title}</h3>
     {chart}
   </div>
