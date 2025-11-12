@@ -13,6 +13,8 @@
     "@tailwindcss/vite": "^4.1.16",
     "axios": "^1.13.2",
     "chart.js": "^4.5.1",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^4.1.0",
     "idb": "^8.0.3",
     "react": "^19.1.1",
     "react-chartjs-2": "^5.3.1",

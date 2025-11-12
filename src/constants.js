@@ -7,5 +7,7 @@ export const COLORS = {
   titleText: "#111827",
   background: "#f9fafb",
   border: "#D1D5DB",
-  secondaryText:"#6B7280"
+  secondaryText:"#6B7280",
+  icon: "#94A3B8",
+  yellow: "yellow"
 };
