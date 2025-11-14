@@ -63,7 +63,32 @@ const CompanyDetails = () => {
     loadDetails();
   }, [symbol]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>
+    <div>
+      <div className="w-full h-20 bg-gray-100 animate-pulse mb-5"></div>
+      <div className="flex flex-col gap-1 px-5">
+        <div className="w-1/3 h-10 bg-gray-100 animate-pulse mb-3 rounded-md"></div>
+        <div className="w-full h-3 bg-gray-100 animate-pulse rounded-full"></div>
+        <div className="w-full h-3 bg-gray-100 animate-pulse rounded-full"></div>
+        <div className="w-full h-3 bg-gray-100 animate-pulse rounded-full"></div>
+        <div className="w-full h-3 bg-gray-100 animate-pulse rounded-full"></div>
+        <div className="w-full h-3 bg-gray-100 animate-pulse rounded-full"></div>
+      </div>
+      <div className="py-10 px-5">
+        <div className="w-1/5 h-9 bg-gray-100 animate-pulse mb-5 rounded-md"></div>
+        <div className="flex gap-5 flex-wrap w-full">
+          <div className="flex-1 h-30 bg-gray-100 animate-pulse mb-3 rounded-md border border-[#D1D5DB]"></div>
+          <div className="flex-1 h-30 bg-gray-100 animate-pulse mb-3 rounded-md border border-[#D1D5DB]"></div>
+          <div className="flex-1 h-30 bg-gray-100 animate-pulse mb-3 rounded-md border border-[#D1D5DB]"></div>
+          <div className="flex-1 h-30 bg-gray-100 animate-pulse mb-3 rounded-md border border-[#D1D5DB]"></div>
+          <div className="flex-1 h-30 bg-gray-100 animate-pulse mb-3 rounded-md border border-[#D1D5DB]"></div>
+        </div>
+      </div>
+      <div className="bg-gray-100 rounded-md border border-[#D1D5DB] animate-pulse h-[220px] mb-10 mx-5"></div>
+      <div className="bg-gray-100 rounded-md border border-[#D1D5DB] animate-pulse h-90 mx-5"></div>
+
+    </div>
+  </div>;
   if (error) return <div>{error}</div>;
   if (!company || !company.data) return <div>No data found</div>;
 
@@ -105,8 +130,8 @@ const CompanyDetails = () => {
         }
       />
       <div className="px-9 pt-6">
-        <div style={{color:COLORS.companyTitle}} className={`text-2xl font-bold pb-5 leading-normal`}>{company.company}</div>
-        <p style={{color:COLORS.companyDescription}} className={`text-sm text-[${COLORS.secondaryText}] leading-normal`}>{financials?.about}</p>
+        <div style={{ color: COLORS.companyTitle }} className={`text-2xl font-bold pb-5 leading-normal`}>{company.company}</div>
+        <p style={{ color: COLORS.companyDescription }} className={`text-sm text-[${COLORS.secondaryText}] leading-normal`}>{financials?.about}</p>
 
         {/* Top Ratios */}
         <div className="py-6">
@@ -121,7 +146,7 @@ const CompanyDetails = () => {
         </div>
 
         {/* Historical Data */}
-       <HistoricalDashboard historicalData={historicalData} />
+        <HistoricalDashboard historicalData={historicalData} />
 
         {/* Quarterly Results */}
         <div className="flex items-center justify-between mb-3">
@@ -209,17 +234,15 @@ const CompanyDetails = () => {
           <div className="flex items-center justify-between pt-2">
             <div className="flex gap-2">
               <button
-                className={`px-4 py-2 text-sm font-medium cursor-pointer ${
-                  shareholdingTab === "quarterly" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-gray-800"
-                }`}
+                className={`px-4 py-2 text-sm font-medium cursor-pointer ${shareholdingTab === "quarterly" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-gray-800"
+                  }`}
                 onClick={() => setShareholdingTab("quarterly")}
               >
                 Quarterly
               </button>
               <button
-                className={`px-4 py-2 text-sm font-medium cursor-pointer ${
-                  shareholdingTab === "yearly" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-gray-800"
-                }`}
+                className={`px-4 py-2 text-sm font-medium cursor-pointer ${shareholdingTab === "yearly" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600 hover:text-gray-800"
+                  }`}
                 onClick={() => setShareholdingTab("yearly")}
               >
                 Yearly
