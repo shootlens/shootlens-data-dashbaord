@@ -29,6 +29,7 @@ const CompanyDetails = () => {
   const [viewModeDashboard, setViewModeDashboard] = useState(true);
   const [viewModeRatios, setViewModeRatios] = useState(true);
   const [shareholdingTab, setShareholdingTab] = useState("quarterly");
+  const [count, setCount] = useState(60);
 
   const handleDashboardView = () => {
     setViewModeBS(!viewModeBS);
@@ -39,6 +40,17 @@ const CompanyDetails = () => {
     setViewModeSH(!viewModeSH);
     setViewModeDashboard(!viewModeDashboard);
   };
+
+  useEffect(() => {
+    if (count === 0) return;
+
+    const timer = setInterval(() => {
+      setCount(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [count]);
+
 
   useEffect(() => {
     const loadDetails = async () => {
@@ -90,7 +102,9 @@ const CompanyDetails = () => {
     </div>
   </div>;
   if (error) return <div>{error}</div>;
-  if (!company || !company.data) return <div>No data found</div>;
+  if (!company || !company.data) return <div className="flex items-center justify-center w-full h-screen text-3xl text-[#6B7280]">
+    We have API Limit...! Please <span className="text-3xl font-semibold text-cyan-900 mx-3"> {count === 0 ? "Refresh Now" :`Refresh After ${count}`}</span>
+  </div>;
 
   const financials = company.data;
 
