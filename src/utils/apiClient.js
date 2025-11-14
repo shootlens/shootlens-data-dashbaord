@@ -3,8 +3,8 @@ import axios from "axios";
 import { openDB } from "idb";
 
 /* ------------------- CONFIG ------------------- */
-export const API_KEY = "HUPkjAqgRSgJa4up6CTUxu"; // keep safe
-export const BASE_URL = "https://api.fincrux.org/api";
+export const API_KEY = import.meta.env.VITE_FINCRUX_API_KEY;
+export const BASE_URL = import.meta.env.VITE_FINCRUX_BASE_URL;
 const DB_NAME = "FincruxDB";
 const STORE_NAME = "cache";
 const DEBUG = false;

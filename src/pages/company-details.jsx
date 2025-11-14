@@ -105,8 +105,8 @@ const CompanyDetails = () => {
         }
       />
       <div className="px-9 pt-6">
-        <div className={`text-2xl text-[${COLORS.titleText}] font-bold pb-5 leading-normal`}>{company.company}</div>
-        <p className={`text-sl text-[${COLORS.secondaryText}] leading-normal`}>{financials?.about}</p>
+        <div style={{color:COLORS.companyTitle}} className={`text-2xl font-bold pb-5 leading-normal`}>{company.company}</div>
+        <p style={{color:COLORS.companyDescription}} className={`text-sm text-[${COLORS.secondaryText}] leading-normal`}>{financials?.about}</p>
 
         {/* Top Ratios */}
         <div className="py-6">

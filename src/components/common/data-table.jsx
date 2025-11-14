@@ -9,7 +9,7 @@ const DataTable = ({ title, data }) => {
     <div className="my-6 overflow-x-auto">
       {title && <h2 className="text-lg font-semibold mb-2">{title}</h2>}
       <div
-        className={`rounded-[10px] border border-[${COLORS.border}] overflow-hidden`}
+        className={`rounded-[10px] border border-[${COLORS.border}] overflow-auto`}
       >
         <table className="table-auto w-full border-collapse">
           <thead className="bg-gray-100">

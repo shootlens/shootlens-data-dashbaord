@@ -9,5 +9,7 @@ export const COLORS = {
   border: "#D1D5DB",
   secondaryText:"#6B7280",
   icon: "#94A3B8",
-  yellow: "yellow"
+  yellow: "yellow",
+  companyTitle: "#62929a",
+  companyDescription:"#5c5757"
 };

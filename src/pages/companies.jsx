@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/common/header";
 import { rateLimitedFetch, BASE_URL, API_KEY } from "../utils/apiClient";
+import { COLORS } from "../constants";
 
 const Companies = () => {
-    const [companies, setCompanies] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-     useEffect(() => {
+  useEffect(() => {
     const loadData = async () => {
       try {
         // Same function call, now it will use IndexedDB internally.
@@ -35,41 +36,55 @@ const Companies = () => {
     loadData();
   }, []);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-
-    const filteredCompanies = companies.filter((company) => /^[A-Za-z]+$/.test(company.trading_symbol))
-
+  if (loading)
     return (
+      <div className="px-20 pt-10">
         <div>
-            <Header count={filteredCompanies.length} />
-            <div className="px-20 pt-10">
-                <table className="table-auto border w-full">
-                    <thead className="border-b bg-gray-100">
-                        <tr>
-                            <th className="border px-3 py-2">No</th>
-                            <th className="border px-3 py-2">Name</th>
-                            <th className="border px-3 py-2">Symbol</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {companies.filter((company) => /^[A-Za-z]+$/.test(company.trading_symbol)).map((company, index) => (
-                            <tr
-                                key={index}
-                                className="hover:bg-gray-50 cursor-pointer"
-                                onClick={() => navigate(`/company/${company.trading_symbol}`)}
-                            >
-                                <td className="border px-3 py-2">{index + 1}</td>
-                                <td className="border px-3 py-2">{company.name}</td>
-                                <td className="border px-3 py-2">{company.trading_symbol}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+          <div className="h-12 w-1/3 bg-gray-100 mb-4 rounded animate-pulse"></div>
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="flex space-x-4 mb-3">
+              <div className="h-11 w-30 bg-gray-100 rounded animate-pulse"></div>
+              <div className="h-11 flex-1 bg-gray-100 rounded animate-pulse"></div>
+              <div className="h-11 w-1/3 bg-gray-100 rounded animate-pulse"></div>
             </div>
-
+          ))}
         </div>
+      </div>
     );
+  if (error) return <div>{error}</div>;
+
+  const filteredCompanies = companies.filter((company) => /^[A-Za-z]+$/.test(company.trading_symbol))
+
+  return (
+    <div>
+      <Header count={filteredCompanies.length} />
+      <div className="sm:p-10 p-5 overflow-auto">
+        <table className="table-auto border w-full overflow-auto">
+          <thead className="border-b bg-gray-100">
+            <tr>
+              <th style={{ color: COLORS.titleText, borderColor:COLORS.border }} className="border py-3 text-sm text-center">No</th>
+              <th style={{ color: COLORS.titleText, borderColor: COLORS.border }} className="border px-5 py-3 text-sm text-start">Name</th>
+              <th style={{ color: COLORS.titleText, borderColor:COLORS.border }} className="border px-5 py-3 text-sm text-start">Symbol</th>
+            </tr>
+          </thead>
+          <tbody>
+            {companies.filter((company) => /^[A-Za-z]+$/.test(company.trading_symbol)).map((company, index) => (
+              <tr
+                key={index}
+                className="hover:bg-gray-50 cursor-pointer"
+                onClick={() => navigate(`/company/${company.trading_symbol}`)}
+              >
+                <td style={{ color: COLORS.secondaryText, borderColor:COLORS.border }} className="border px-3 py-2 text-sm text-center">{index + 1}</td>
+                <td style={{ color: COLORS.secondaryText, borderColor:COLORS.border }} className="border px-5 py-2 text-sm">{company.name}</td>
+                <td style={{ color: COLORS.secondaryText, borderColor:COLORS.border }} className="border px-5 py-2 text-sm">{company.trading_symbol}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  );
 };
 
 export default Companies;
