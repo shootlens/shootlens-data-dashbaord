@@ -38,7 +38,7 @@ const Companies = () => {
 
   if (loading)
     return (
-      <div className="px-20 pt-10">
+      <div className="md:px-20 pt-10 px-[10px]">
         <div>
           <div className="h-12 w-1/3 bg-gray-100 mb-4 rounded animate-pulse"></div>
           {[...Array(12)].map((_, i) => (

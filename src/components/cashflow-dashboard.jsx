@@ -62,6 +62,7 @@ const CashFlowDashboard = ({ data }) => {
   // --- Chart options ---
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     interaction: { mode: "index", intersect: false },
     plugins: {
       legend: { position: "bottom" },
@@ -174,21 +175,19 @@ const CashFlowDashboard = ({ data }) => {
       <div className={`flex border-b border-[${COLORS.border}]`}>
         <button
           onClick={() => setActiveTab("trends")}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === "trends"
+          className={`px-4 py-2 text-sm font-medium ${activeTab === "trends"
               ? "border-b-2 border-blue-600 text-blue-600"
               : "text-gray-600 hover:text-gray-800"
-          }`}
+            }`}
         >
           Cash Flow Trends
         </button>
         <button
           onClick={() => setActiveTab("insights")}
-          className={`ml-4 px-4 py-2 text-sm font-medium ${
-            activeTab === "insights"
+          className={`ml-4 px-4 py-2 text-sm font-medium ${activeTab === "insights"
               ? "border-b-2 border-blue-600 text-blue-600"
               : "text-gray-600 hover:text-gray-800"
-          }`}
+            }`}
         >
           Analytical Insights
         </button>
@@ -254,7 +253,7 @@ const ChartCard = ({ title, chart, result, takeaway }) => (
       </p>
     </div>
 
-  <div>  {chart}</div>
+    <div className="h-80">{chart}</div>
   </div>
 );
 

@@ -143,7 +143,7 @@ const CompanyDetails = () => {
           </div>
         }
       />
-      <div className="px-9 pt-6">
+      <div className="md:px-9 pt-6 px-[10px]">
         <div style={{ color: COLORS.companyTitle }} className={`text-2xl font-bold pb-5 leading-normal`}>{company.company}</div>
         <p style={{ color: COLORS.companyDescription }} className={`text-sm text-[${COLORS.secondaryText}] leading-normal`}>{financials?.about}</p>
 

@@ -53,6 +53,7 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
   // Common chart options
   const options = {
     responsive: true,
+    maintainAspectRatio:false,
     interaction: { mode: "index", intersect: false },
     plugins: {
       legend: { position: "bottom" },
@@ -233,7 +234,7 @@ const mainData = {
 const ChartCard = ({ title, chart }) => (
   <div className={`bg-white rounded-[10px] border border-[${COLORS.border}] p-4`}>
     <h3 className="text-lg font-medium mb-2 text-gray-700">{title}</h3>
-    {chart}
+    <div className="h-80">{chart}</div>
   </div>
 );
 
