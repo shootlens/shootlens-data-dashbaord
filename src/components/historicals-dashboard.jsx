@@ -12,6 +12,7 @@ import {
     TimeScale,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
+import { COLORS } from "../constants";
 
 ChartJS.register(
     CategoryScale,
@@ -216,7 +217,7 @@ const HistoricalDashboard = ({ historicalData }) => {
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Historical Dashboard</h2>
                 <select
-                    className="border border-gray-300 rounded-md p-1 text-sm"
+                    className={`border border-[${COLORS.border}] rounded-[5px] px-2 py-1.5 text-sm`}
                     value={timeframe}
                     onChange={(e) => setTimeframe(e.target.value)}
                 >
