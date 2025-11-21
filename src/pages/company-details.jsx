@@ -102,7 +102,7 @@ const CompanyDetails = () => {
     </div>
   </div>;
   if (error) return <div>{error}</div>;
-  if (!company || !company.data) return <div className="flex items-center justify-center w-full h-screen text-3xl text-[#6B7280]">
+  if (!company || !company.data) return <div className="flex items-center justify-center w-full h-screen text-3xl text-[#6B7280] flex-wrap">
     We have API Limit...! Please <span className="text-3xl font-semibold text-cyan-900 mx-3"> {count === 0 ? "Refresh Now" :`Refresh After ${count}`}</span>
   </div>;
 
