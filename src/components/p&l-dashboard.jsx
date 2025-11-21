@@ -151,7 +151,7 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
     };
 
     return (
-        <div className="p-6 bg-gray-50 rounded-2xl mt-8">
+        <div className="rounded-2xl mt-8">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">
                 Profit & Loss Dashboard
             </h2>
