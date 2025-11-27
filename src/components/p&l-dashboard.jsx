@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,6 +12,7 @@ import {
     Filler,
 } from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
+import { COLORS } from "../constants";
 
 ChartJS.register(
     CategoryScale,
@@ -25,33 +26,37 @@ ChartJS.register(
     Filler
 );
 
-const baseOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { position: "bottom" } },
-    scales: {
-        x: { grid: { display: false } },
-        y: { grid: { color: "rgba(200,200,200,0.2)" } },
-    },
+const parseValue = (v) => {
+    if (v == null) return 0;
+
+    if (typeof v === "number") return v;
+
+    const cleaned = String(v)
+        .replace(/,/g, "")
+        .replace("%", "")
+        .replace(/[^\d.-]/g, "")
+        .trim();
+
+    const n = parseFloat(cleaned);
+    return isNaN(n) ? 0 : n;
 };
 
-const parseValue = (v) => {
-    if (typeof v === "string") {
-        const cleaned = v.replace(/,/g, "").replace("%", "");
-        return parseFloat(cleaned) || 0;
-    }
-    return v || 0;
-};
+const normalizeKey = (str = "") =>
+    str.toLowerCase().replace(/\s+/g, " ").trim();
+
+const get = (obj, key, len) =>
+    obj[normalizeKey(key)] || Array(len).fill(0);
 
 const ProfitLossDashboard = ({ profitLossData = [] }) => {
     const parsed = useMemo(() => {
-        if (!Array.isArray(profitLossData) || profitLossData.length < 2) return null;
+        if (!Array.isArray(profitLossData) || profitLossData.length < 2)
+            return null;
 
-        const headers = profitLossData[0].slice(1); // Years
+        const headers = profitLossData[0].slice(1); // year labels
         const dataObj = {};
 
         profitLossData.slice(1).forEach((row) => {
-            const key = row[0];
+            const key = normalizeKey(row[0]);
             const values = row.slice(1).map(parseValue);
             dataObj[key] = values;
         });
@@ -61,19 +66,20 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
 
     if (!parsed) return null;
     const { headers, dataObj } = parsed;
+    const n = headers.length;
 
-    // ---- CHART DATA ----
+
     const salesVsExpenses = {
         labels: headers,
         datasets: [
             {
                 label: "Sales",
-                data: dataObj["Sales"],
+                data: get(dataObj, "sales", n),
                 backgroundColor: "rgba(37,99,235,0.6)",
             },
             {
                 label: "Expenses",
-                data: dataObj["Expenses"],
+                data: get(dataObj, "expenses", n),
                 backgroundColor: "rgba(239,68,68,0.6)",
             },
         ],
@@ -84,22 +90,22 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
         datasets: [
             {
                 label: "Operating Profit",
-                data: dataObj["Operating Profit"],
+                data: get(dataObj, "operating profit", n),
                 backgroundColor: "rgba(34,197,94,0.7)",
             },
             {
                 label: "Other Income",
-                data: dataObj["Other Income"],
+                data: get(dataObj, "other income", n),
                 backgroundColor: "rgba(14,165,233,0.7)",
             },
             {
                 label: "Interest",
-                data: dataObj["Interest"],
+                data: get(dataObj, "interest", n),
                 backgroundColor: "rgba(234,179,8,0.7)",
             },
             {
                 label: "Depreciation",
-                data: dataObj["Depreciation"],
+                data: get(dataObj, "depreciation", n),
                 backgroundColor: "rgba(244,63,94,0.7)",
             },
         ],
@@ -110,14 +116,14 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
         datasets: [
             {
                 label: "Profit Before Tax",
-                data: dataObj["Profit before tax"],
+                data: get(dataObj, "profit before tax", n),
                 borderColor: "rgba(99,102,241,1)",
                 backgroundColor: "rgba(99,102,241,0.2)",
                 tension: 0.3,
             },
             {
                 label: "Net Profit",
-                data: dataObj["Net Profit"],
+                data: get(dataObj, "net profit", n),
                 borderColor: "rgba(34,197,94,1)",
                 backgroundColor: "rgba(34,197,94,0.2)",
                 tension: 0.3,
@@ -130,7 +136,7 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
         datasets: [
             {
                 label: "Dividend Payout %",
-                data: dataObj["Dividend Payout %"],
+                data: get(dataObj, "dividend payout %", n),
                 borderColor: "rgba(234,179,8,1)",
                 backgroundColor: "rgba(234,179,8,0.3)",
                 fill: true,
@@ -144,55 +150,59 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
         datasets: [
             {
                 label: "Tax %",
-                data: dataObj["Tax %"],
+                data: get(dataObj, "tax %", n),
                 backgroundColor: "rgba(249,115,22,0.7)",
             },
         ],
     };
 
+    const baseOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "bottom" } },
+        scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: "rgba(200,200,200,0.2)" } },
+        },
+    };
+
     return (
         <div className="rounded-2xl mt-8">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                Profit & Loss Dashboard
-            </h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
-                {/* Chart 1: Sales vs Expenses */}
-                <div className="bg-white rounded-2xl shadow p-4 h-96">
-                    <h3 className="text-lg font-semibold mb-2">Sales vs Expenses</h3>
-                    <div className="h-80"><Bar data={salesVsExpenses} options={baseOptions} /></div>
-                </div>
 
-                {/* Chart 2: Operating Breakdown */}
-                <div className="bg-white rounded-2xl shadow p-4 h-96">
-                    <h3 className="text-lg font-semibold mb-2">
-                        Operating Profit Breakdown
-                    </h3>
-                    <div className="h-80"><Bar data={operatingBreakdown} options={baseOptions} /></div>
-                </div>
+                <ChartCard title="Sales vs Expenses">
+                    <Bar data={salesVsExpenses} options={baseOptions} />
+                </ChartCard>
 
-                {/* Chart 3: Profit Before Tax vs Net Profit */}
-                <div className="bg-white rounded-2xl shadow p-4 h-96">
-                    <h3 className="text-lg font-semibold mb-2">
-                        Profit Before Tax vs Net Profit
-                    </h3>
-                    <div className="h-80"><Line data={profitComparison} options={baseOptions} /></div>
-                </div>
+                <ChartCard title="Operating Profit Breakdown">
+                    <Bar data={operatingBreakdown} options={baseOptions} />
+                </ChartCard>
 
-                {/* Chart 4: Dividend Payout */}
-                <div className="bg-white rounded-2xl shadow p-4 h-96">
-                    <h3 className="text-lg font-semibold mb-2">Dividend Payout %</h3>
-                    <div className="h-80"><Line data={dividendPayout} options={baseOptions} /></div>
-                </div>
+                <ChartCard title="Profit Before Tax vs Net Profit">
+                    <Line data={profitComparison} options={baseOptions} />
+                </ChartCard>
 
-                {/* Chart 5: Tax % Variation */}
-                <div className="bg-white rounded-2xl shadow p-4 h-96">
-                    <h3 className="text-lg font-semibold mb-2">Tax % Variation</h3>
-                    <div className="h-80"><Bar data={taxVariation} options={baseOptions} /></div>
-                </div>
+                <ChartCard title="Dividend Payout %">
+                    <Line data={dividendPayout} options={baseOptions} />
+                </ChartCard>
+
+                <ChartCard title="Tax % Variation">
+                    <Bar data={taxVariation} options={baseOptions} />
+                </ChartCard>
+
             </div>
         </div>
     );
 };
+
+const ChartCard = ({ title, children }) => (
+    <div
+        className="bg-white rounded-2xl border p-4 h-96"
+        style={{ borderColor: COLORS.border }}
+    >
+        <h3 className="text-lg font-semibold mb-2">{title}</h3>
+        <div className="h-80">{children}</div>
+    </div>
+);
 
 export default ProfitLossDashboard;
