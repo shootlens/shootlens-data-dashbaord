@@ -1,42 +1,43 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
+@keyframes rotate-border {
+  0% {
     transform: rotate(0deg);
   }
-  to {
-    transform: rotate(360deg);
+  100% {
+    transform: rotate(720deg); /* 2 full rotations */
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.rotate-twice {
+  animation: rotate-border 6s linear 1; /* slow + only 1 time */
 }
 
-.card {
-  padding: 2em;
+.animation-border {
+	border-radius: 15px;
+	animation: gradientBorder 1s linear infinite;
+	background: linear-gradient(to right, #120020, #120020) content-box,
+		conic-gradient(
+				from var(--angle),
+				#f7f7fa 0deg,
+				#f7f7fa 53.3deg,
+				#0bfe78 90.46deg,
+				#07cf78 126.24deg,
+				#06ae57 178.82deg,
+				#f8f8fa 360deg
+			)
+			border-box;
 }
 
-.read-the-docs {
-  color: #888;
+@keyframes gradientBorder {
+	from {
+		--angle: 0turn;
+	}
+	to {
+		--angle: 1turn;
+	}
+}
+
+@property --angle {
+	syntax: "<angle>";
+	inherits: true;
+	initial-value: 0turn;
 }
