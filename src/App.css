@@ -1,28 +1,21 @@
-@keyframes rotate-border {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(720deg); /* 2 full rotations */
-  }
-}
-
-.rotate-twice {
-  animation: rotate-border 6s linear 1; /* slow + only 1 time */
-}
-
 .animation-border {
 	border-radius: 15px;
 	animation: gradientBorder 1s linear infinite;
 	background: linear-gradient(to right, #120020, #120020) content-box,
 		conic-gradient(
 				from var(--angle),
-				#f7f7fa 0deg,
+				/* #f7f7fa 0deg,
 				#f7f7fa 53.3deg,
 				#0bfe78 90.46deg,
 				#07cf78 126.24deg,
 				#06ae57 178.82deg,
-				#f8f8fa 360deg
+				#f8f8fa 360deg */
+        #ffffff 0deg,
+				#f36fff 53.3deg,
+				#268aff 90.46deg,
+				#52eaea 126.24deg,
+				#ffffff 178.82deg,
+				#ffffff 360deg
 			)
 			border-box;
 }

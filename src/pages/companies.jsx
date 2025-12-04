@@ -186,40 +186,39 @@ const Companies = () => {
           {/* Scrollable Table Container */}
           <div className="h-[79vh] overflow-y-auto" style={{ borderColor: COLORS.border }}>
             <table className="table-auto border w-full">
-              <thead className="border-b bg-gray-100 overflow-hidden" style={{ borderColor: COLORS.border}}>
+              <thead className="border-b bg-gray-100 overflow-hidden" style={{ borderColor: COLORS.border }}>
                 <tr>
-                  <th className="border py-3 text-sm text-center" style={{ borderColor: COLORS.border, color:COLORS.titleText }}>No</th>
-                  <th className="border px-5 py-3 text-sm text-start" style={{ borderColor: COLORS.border, color:COLORS.titleText }}>Name</th>
-                  <th className="border px-5 py-3 text-sm text-start" style={{ borderColor: COLORS.border, color:COLORS.titleText }}>Symbol</th>
+                  <th className="border py-3 text-sm text-center" style={{ borderColor: COLORS.border, color: COLORS.titleText }}>No</th>
+                  <th className="border px-5 py-3 text-sm text-start" style={{ borderColor: COLORS.border, color: COLORS.titleText }}>Name</th>
+                  <th className="border px-5 py-3 text-sm text-start" style={{ borderColor: COLORS.border, color: COLORS.titleText }}>Symbol</th>
                 </tr>
               </thead>
-
               <tbody>
-                 {filteredCompanies.length === 0 && (
-    <tr>
-      <td
-        colSpan="3"
-        className="text-center py-10 text-gray-500 text-sm"
-      >
-        No companies found for "<span className="font-semibold">{debouncedSearch}</span>"
-      </td>
-    </tr>
-  )}
+                {filteredCompanies.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan="3"
+                      className="text-center py-10 text-gray-500 text-sm"
+                    >
+                      No companies found for "<span className="font-semibold">{debouncedSearch}</span>"
+                    </td>
+                  </tr>
+                )}
                 {filteredCompanies.map((company, index) => (
                   <tr
                     key={index}
                     className="hover:bg-gray-50 cursor-pointer"
                     onClick={() => navigate(`/company/${company.trading_symbol}`)}
                   >
-                    <td className="border px-3 py-2 text-sm text-center" style={{ borderColor: COLORS.border, color:COLORS.secondaryText }}>
+                    <td className="border px-3 py-2 text-sm text-center" style={{ borderColor: COLORS.border, color: COLORS.secondaryText }}>
                       {index + 1}
                     </td>
 
-                    <td className="border px-5 py-2 text-sm" style={{ borderColor: COLORS.border, color:COLORS.secondaryText }}>
+                    <td className="border px-5 py-2 text-sm" style={{ borderColor: COLORS.border, color: COLORS.secondaryText }}>
                       {highlightMatch(company.name, debouncedSearch)}
                     </td>
 
-                    <td className="border px-5 py-2 text-sm" style={{ borderColor: COLORS.border, color:COLORS.secondaryText }}>
+                    <td className="border px-5 py-2 text-sm" style={{ borderColor: COLORS.border, color: COLORS.secondaryText }}>
                       {highlightMatch(company.trading_symbol, debouncedSearch)}
                     </td>
                   </tr>

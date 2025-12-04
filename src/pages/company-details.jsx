@@ -105,6 +105,7 @@ const CompanyDetails = () => {
 
   useEffect(() => {
     let endTime = localStorage.getItem(`countdown_end_${symbol}`);
+    let hasRefreshed = localStorage.getItem(`refreshed_once_${symbol}`);
 
     // If no endTime exists, create one
     if (!endTime) {
@@ -118,13 +119,21 @@ const CompanyDetails = () => {
 
       if (remaining <= 0) {
         clearInterval(timer);
+
+        // Remove countdown from localStorage
         localStorage.removeItem(`countdown_end_${symbol}`);
-        window.location.reload(); // Auto refresh
+
+        // Refresh only ONE time
+        if (!hasRefreshed) {
+          localStorage.setItem(`refreshed_once_${symbol}`, "1");
+          window.location.reload();
+        }
       }
     }, 1000);
 
     return () => clearInterval(timer);
   }, [symbol]);
+
 
   /* ---------------------------------------------------
      🔹 Load API
@@ -170,10 +179,6 @@ const CompanyDetails = () => {
     );
 
   const financials = company.data;
-
-  /* ---------------------------------------------------
-     🔹 Main UI Render
-  ----------------------------------------------------*/
   return (
     <div className="pb-6">
       <Header
@@ -186,7 +191,8 @@ const CompanyDetails = () => {
               );
               setView(newState);
             }}
-            className="px-3 py-2 rounded border border-gray-300 cursor-pointer"
+            className="px-[6px] py-[3px] text-[14px] font-medium rounded border cursor-pointer"
+            style={{ color: COLORS.secondaryText, borderColor: COLORS.border }}
           >
             {view.dashboard ? "📊 Dashboard Mode" : "📋 Table Mode"}
           </button>

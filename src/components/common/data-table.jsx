@@ -30,7 +30,7 @@ const DataTable = ({ title, data }) => {
                 {row.map((cell, i) => (
                   <td
                     key={i}
-                    className={`px-3 py-2 text-sm text-[${COLORS.titleText}] font-normal leading-normal border-t border-[${COLORS.border}]`}
+                    className={`px-3 py-2 text-sm text-[${COLORS.secondaryText}] font-normal leading-normal border-t border-[${COLORS.border}]`}
                   >
                     {cell}
                   </td>
