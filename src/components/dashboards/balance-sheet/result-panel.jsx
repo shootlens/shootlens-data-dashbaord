@@ -4,7 +4,7 @@ const ResultPanel = ({ text, pct }) => {
       if (pct == null)
         return { bg: "bg-gray-50", text: "text-gray-700", border: "#D1D5DB" };
       if (pct > 5)
-        return { bg: "bg-green-50", text: "text-green-700", border: "green" };
+        return { bg: "bg-green-50", text: "text-green-700", border: "#89e289" };
       if (pct < -5) return { bg: "bg-red-50", text: "text-red-700", border: "red" };
       return { bg: "bg-yellow-50", text: "text-yellow-700", border: "yellow" };
     };
