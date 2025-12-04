@@ -6,10 +6,10 @@ import DataTable from "../components/common/data-table";
 import QuarterlyResultsChart from "../components/quaterly-results";
 import ProfitLossDashboard from "../components/p&l-dashboard";
 import ShareholdingCharts from "../components/share-holding-dashboard";
-import BalanceSheetDashboard from "../components/balance-sheet-dashboard";
+import BalanceSheetDashboard from "../components/dashboards/balance-sheet/balance-sheet-dashboard";
 import CashFlowDashboard from "../components/cashflow-dashboard";
 import ROCEDashboard from "../components/roce-dashboard";
-import HistoricalDashboard from "../components/historicals-dashboard";
+import HistoricalDashboard from "../components/dashboards/historical/historicals-dashboard";
 import { COLORS } from "../constants";
 import { FiTrendingUp, FiBarChart2, FiActivity, FiPieChart, FiLayers } from "react-icons/fi";
 import { GiPriceTag } from "react-icons/gi";
@@ -47,7 +47,8 @@ const Section = ({ title, show, onToggle, table, chart }) => (
       <h2 className="text-lg font-semibold">{title}</h2>
       <button
         onClick={onToggle}
-        className="text-sm font-medium px-3 py-2 rounded border border-gray-300 cursor-pointer"
+        className="px-[6px] py-[3px] text-[14px] font-medium rounded border cursor-pointer"
+        style={{ color: COLORS.secondaryText, borderColor: COLORS.border }}
       >
         {show ? "📊 Show Chart" : "📋 Show Table"}
       </button>
@@ -200,13 +201,13 @@ const CompanyDetails = () => {
       />
 
       <div className="md:px-6 pt-6 px-3">
-        <h1 className="text-2xl font-bold mb-3" style={{ color: COLORS.companyTitle }}>
+        {/* <h1 className="text-2xl font-bold mb-3" style={{ color: COLORS.companyTitle }}>
           {company.company}
-        </h1>
+        </h1> */}
 
-        <p className="text-sm leading-normal" style={{ color: COLORS.companyDescription }}>
+        {/* <p className="text-sm leading-normal" style={{ color: COLORS.companyDescription }}>
           {financials.about}
-        </p>
+        </p> */}
 
         {/* Top Ratios */}
         <div className="py-6">

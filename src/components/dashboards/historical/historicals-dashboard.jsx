@@ -13,8 +13,8 @@ import {
     Filler,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { COLORS } from "../constants";
-import "../App.css"
+import { COLORS } from "../../../constants";
+import "../../../App.css"
 
 ChartJS.register(
     CategoryScale,

@@ -1,6 +1,6 @@
 .animation-border {
 	border-radius: 15px;
-	animation: gradientBorder 1s linear infinite;
+	animation: gradientBorder 4s linear infinite;
 	background: linear-gradient(to right, #120020, #120020) content-box,
 		conic-gradient(
 				from var(--angle),
