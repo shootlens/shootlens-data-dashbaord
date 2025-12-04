@@ -201,13 +201,13 @@ const CompanyDetails = () => {
       />
 
       <div className="md:px-6 pt-6 px-3">
-        {/* <h1 className="text-2xl font-bold mb-3" style={{ color: COLORS.companyTitle }}>
+        <h1 className="text-2xl font-bold mb-3" style={{ color: COLORS.companyTitle }}>
           {company.company}
-        </h1> */}
+        </h1>
 
-        {/* <p className="text-sm leading-normal" style={{ color: COLORS.companyDescription }}>
+        <p className="text-sm leading-normal" style={{ color: COLORS.companyDescription }}>
           {financials.about}
-        </p> */}
+        </p>
 
         {/* Top Ratios */}
         <div className="py-6">
