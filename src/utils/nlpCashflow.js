@@ -1,16 +1,16 @@
 // src/utils/nlpCashflow.js – AI NLP Engine for Cash Flow Analysis (Hybrid tone)
-function sum(arr){ return arr.reduce((s,v)=>s+(v||0),0); }
-function mean(arr){ return arr.length? sum(arr)/arr.length : 0; }
-function std(arr){ const m=mean(arr); return Math.sqrt(arr.reduce((s,x)=>s+Math.pow((x-m),2),0)/(arr.length||1)); }
-function first(arr){ return arr?.length? arr[0]:0; }
-function last(arr){ return arr?.length? arr[arr.length-1]:0; }
-function pct(start,end){ if(start===0) return end>0?100:end<0?-100:0; return ((end-start)/Math.abs(start))*100; }
-function cagr(start,end,periods){ if(periods<=0||start<=0) return null; return (Math.pow(end/start,1/periods)-1)*100; }
-function trend(arr){ const p=pct(first(arr),last(arr)); if(Math.abs(p)<5) return "flat"; if(p>5) return "uptrend"; return "downtrend"; }
-function risk(arr){ const r=std(arr)/Math.abs(mean(arr)||1); if(r>1) return {level:"high",msg:"High volatility in this cashflow"}; if(r>0.5) return {level:"medium",msg:"Moderate volatility"}; return {level:"low",msg:"Stable cashflow"}; }
-function fmt(n){ return `₹${Number(n).toLocaleString()}`; }
+function sum(arr) { return arr.reduce((s, v) => s + (v || 0), 0); }
+function mean(arr) { return arr.length ? sum(arr) / arr.length : 0; }
+function std(arr) { const m = mean(arr); return Math.sqrt(arr.reduce((s, x) => s + Math.pow((x - m), 2), 0) / (arr.length || 1)); }
+function first(arr) { return arr?.length ? arr[0] : 0; }
+function last(arr) { return arr?.length ? arr[arr.length - 1] : 0; }
+function pct(start, end) { if (start === 0) return end > 0 ? 100 : end < 0 ? -100 : 0; return ((end - start) / Math.abs(start)) * 100; }
+function cagr(start, end, periods) { if (periods <= 0 || start <= 0) return null; return (Math.pow(end / start, 1 / periods) - 1) * 100; }
+function trend(arr) { const p = pct(first(arr), last(arr)); if (Math.abs(p) < 5) return "flat"; if (p > 5) return "uptrend"; return "downtrend"; }
+function risk(arr) { const r = std(arr) / Math.abs(mean(arr) || 1); if (r > 1) return { level: "high", msg: "High volatility in this cashflow" }; if (r > 0.5) return { level: "medium", msg: "Moderate volatility" }; return { level: "low", msg: "Stable cashflow" }; }
+function fmt(n) { return `₹${Number(n).toLocaleString()}`; }
 
-function summarize(label, arr, stats){
+function summarize(label, arr, stats) {
   const pctLabel = stats.pct >= 0 ? `${stats.pct.toFixed(1)}% increase` : `${Math.abs(stats.pct).toFixed(1)}% decrease`;
   const cagrText = stats.cagr !== null ? ` CAGR ${stats.cagr.toFixed(1)}%` : "";
   return `${label} moved from ${fmt(stats.start)} to ${fmt(stats.end)} (${pctLabel})${cagrText}. Trend: ${stats.trend}.`;
@@ -59,21 +59,21 @@ function buildPerMetricRecs(key, stats) {
   }
 
   // ensure exactly 2, but keep them meaningful
-  return recs.slice(0,2);
+  return recs.slice(0, 2);
 }
 
-export default function generateCashflowInsights({ series={}, labels=[] } = {}) {
-  const { ocf=[], icf=[], fcf=[], ncf=[] } = series;
-  const periods = Math.max(0, labels.length-1);
+export default function generateCashflowInsights({ series = {}, labels = [] } = {}) {
+  const { ocf = [], icf = [], fcf = [], ncf = [] } = series;
+  const periods = Math.max(0, labels.length - 1);
 
   const stats = {
-    ocf:{ start:first(ocf), end:last(ocf) },
-    icf:{ start:first(icf), end:last(icf) },
-    fcf:{ start:first(fcf), end:last(fcf) },
-    ncf:{ start:first(ncf), end:last(ncf) },
+    ocf: { start: first(ocf), end: last(ocf) },
+    icf: { start: first(icf), end: last(icf) },
+    fcf: { start: first(fcf), end: last(fcf) },
+    ncf: { start: first(ncf), end: last(ncf) },
   };
 
-  for(const k of Object.keys(stats)){
+  for (const k of Object.keys(stats)) {
     const s = stats[k];
     s.pct = pct(s.start, s.end);
     s.trend = trend(series[k] || []);

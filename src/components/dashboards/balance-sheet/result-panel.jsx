@@ -56,7 +56,7 @@ const ResultPanel = ({ text, pct }) => {
             </div>
           </div>
           <div className="text-[11px] px-2 py-[2px] rounded-full border border-gray-300 bg-white/70 text-gray-700 whitespace-nowrap">
-            Confidence:{" "}
+            Confidence:
             <span className="font-semibold">
               {confidence.label} ({confidence.score}%)
             </span>

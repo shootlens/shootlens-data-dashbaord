@@ -210,7 +210,7 @@ export const clearExpiredCache = async (maxAge = 7 * 24 * 60 * 60 * 1000) => {
     try {
       const itemTime = parseInt(localStorage.getItem(`${key}_time`) || "0", 10);
       if (Date.now() - itemTime > maxAge) localStorage.removeItem(key);
-    } catch {}
+    } catch { }
   });
 
   if (DEBUG) console.log("🧹 Cleared expired cache entries");

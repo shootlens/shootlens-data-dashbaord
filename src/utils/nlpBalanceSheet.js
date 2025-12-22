@@ -1,6 +1,3 @@
-// src/utils/nlpBalanceSheet.js
-// NLP engine for Balance Sheet analysis — Tone C (professional + easy, 3-sentence outputs)
-
 function sum(arr = []) { return arr.reduce((s, v) => s + (v || 0), 0); }
 function mean(arr = []) { return arr.length ? sum(arr) / arr.length : 0; }
 function std(arr = []) { if (!arr.length) return 0; const m = mean(arr); return Math.sqrt(arr.reduce((s, x) => s + Math.pow((x - m), 2), 0) / arr.length); }
@@ -54,9 +51,9 @@ function buildPerMetricRecs(metric, stats = {}) {
     case 'fixed_assets':
     case 'investments':
     case 'cwip':
-      if (p > 8) push(`${metric.replace('_',' ')} increased — active investment/capex.`);
-      else if (p < -5) push(`${metric.replace('_',' ')} decreased — disposals or lower spend.`);
-      else push(`${metric.replace('_',' ')} steady.`);
+      if (p > 8) push(`${metric.replace('_', ' ')} increased — active investment/capex.`);
+      else if (p < -5) push(`${metric.replace('_', ' ')} decreased — disposals or lower spend.`);
+      else push(`${metric.replace('_', ' ')} steady.`);
       push('Check expected returns and depreciation impact.');
       break;
     case 'de_ratio':
@@ -157,29 +154,29 @@ export default function generateBalanceSheetInsights({ balance_sheet = [] } = {}
   const findSeries = (candidates = []) => { for (const k of candidates) if (rowMap[k]) return rowMap[k]; return Array(years.length).fill(0); };
 
   // primary series
-  const totalAssets = findSeries(['total assets','assets']);
-  const totalLiabilities = findSeries(['total liabilities','liabilities']);
-  const equity = findSeries(['equity capital','equity','share capital']);
-  const reserves = findSeries(['reserves','reserves and surplus','retained earnings']);
-  const borrowings = findSeries(['borrowings','debt','total borrowings']);
-  const fixedAssets = findSeries(['fixed assets','property plant equipment','ppe']);
-  const cwip = findSeries(['cwip','capital work in progress']);
+  const totalAssets = findSeries(['total assets', 'assets']);
+  const totalLiabilities = findSeries(['total liabilities', 'liabilities']);
+  const equity = findSeries(['equity capital', 'equity', 'share capital']);
+  const reserves = findSeries(['reserves', 'reserves and surplus', 'retained earnings']);
+  const borrowings = findSeries(['borrowings', 'debt', 'total borrowings']);
+  const fixedAssets = findSeries(['fixed assets', 'property plant equipment', 'ppe']);
+  const cwip = findSeries(['cwip', 'capital work in progress']);
   const investments = findSeries(['investments']);
   const otherAssets = findSeries(['other assets']);
   const otherLiabilities = findSeries(['other liabilities']);
 
   const metrics = {
-  total_assets: totalAssets,
-  total_liabilities: totalLiabilities,
-  equity,
-  reserves,
-  borrowings,
-  fixed_assets: fixedAssets,
-  cwip,
-  investments,
-  other_assets: otherAssets,
-  other_liabilities: otherLiabilities
-};
+    total_assets: totalAssets,
+    total_liabilities: totalLiabilities,
+    equity,
+    reserves,
+    borrowings,
+    fixed_assets: fixedAssets,
+    cwip,
+    investments,
+    other_assets: otherAssets,
+    other_liabilities: otherLiabilities
+  };
 
 
   const stats = {};
@@ -262,23 +259,23 @@ export default function generateBalanceSheetInsights({ balance_sheet = [] } = {}
     equity: summarizeMetric('Equity', stats.equity),
     borrowings: summarizeMetric('Borrowings', stats.borrowings),
     assets_composition: (() => {
-      const parts = Object.entries(assetsCompositionPct).map(([k, v]) => `${k.replace('_',' ')} ${v.toFixed(1)}%`);
+      const parts = Object.entries(assetsCompositionPct).map(([k, v]) => `${k.replace('_', ' ')} ${v.toFixed(1)}%`);
       return `Fixed/major asset split: ${parts.join(' • ')}. A heavier fixed-asset base suggests capital intensity; check depreciation and capex ROI. For investors, stable productive assets are a positive sign.`;
     })(),
     liabilities_composition: (() => {
-      const parts = Object.entries(liabilitiesCompositionPct).map(([k, v]) => `${k.replace('_',' ')} ${v.toFixed(1)}%`);
+      const parts = Object.entries(liabilitiesCompositionPct).map(([k, v]) => `${k.replace('_', ' ')} ${v.toFixed(1)}%`);
       return `Liabilities split: ${parts.join(' • ')}. A high borrowings share increases leverage risk; check interest coverage. Investors should prefer stronger equity cushions for stability.`;
     })(),
     assets_breakdown: (() => {
       const keys = Object.keys(assetsCompositionPct);
-      const top = keys.sort((a,b)=>assetsCompositionPct[b]-assetsCompositionPct[a]).slice(0,3);
-      const text = top.map(k => `${k.replace('_',' ')} ${assetsCompositionPct[k].toFixed(1)}%`).join(', ');
+      const top = keys.sort((a, b) => assetsCompositionPct[b] - assetsCompositionPct[a]).slice(0, 3);
+      const text = top.map(k => `${k.replace('_', ' ')} ${assetsCompositionPct[k].toFixed(1)}%`).join(', ');
       return `Latest year breakdown — ${text}. Verify whether the top components are income-generating. Investors should prefer assets that support cashflow growth.`;
     })(),
     liabilities_breakdown: (() => {
       const keys = Object.keys(liabilitiesCompositionPct);
-      const top = keys.sort((a,b)=>liabilitiesCompositionPct[b]-liabilitiesCompositionPct[a]).slice(0,3);
-      const text = top.map(k => `${k.replace('_',' ')} ${liabilitiesCompositionPct[k].toFixed(1)}%`).join(', ');
+      const top = keys.sort((a, b) => liabilitiesCompositionPct[b] - liabilitiesCompositionPct[a]).slice(0, 3);
+      const text = top.map(k => `${k.replace('_', ' ')} ${liabilitiesCompositionPct[k].toFixed(1)}%`).join(', ');
       return `Latest year liabilities breakdown — ${text}. If borrowings are large, assess repayment schedule. For investors, balanced liabilities are preferable.`;
     })(),
     assets_vs_liabilities: (() => {

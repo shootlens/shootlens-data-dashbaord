@@ -1,6 +1,6 @@
 import { COLORS } from "../../../constants";
 import ResultPanel from "./result-panel";
-import { BsArrowsAngleExpand } from "react-icons/bs";
+import {MdOpenInFull} from "react-icons/md"
 
 const ChartCard = ({
   title,
@@ -55,7 +55,7 @@ const ChartCard = ({
             onClick={onFullscreen}
             className="border rounded-[5px] p-1 hover:bg-gray-50 text-gray-600 cursor-pointer"
           >
-            <BsArrowsAngleExpand size="10px"/>
+            <MdOpenInFull size="11px" />
           </div>
         )}
       </div>

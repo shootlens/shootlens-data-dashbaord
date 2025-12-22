@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/common/header";
 import { rateLimitedFetch, BASE_URL, API_KEY } from "../utils/apiClient";
@@ -10,8 +10,34 @@ const Companies = () => {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState(""); // live typing
   const [debouncedSearch, setDebouncedSearch] = useState(""); // delayed search
+  const searchInputRef = useRef(null);
 
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const tag = document.activeElement.tagName;
+
+      // Ignore if already typing in input or textarea
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+      // Ctrl + K / Cmd + K
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+
+      // Slash "/"
+      if (e.key === "/") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -159,6 +185,7 @@ const Companies = () => {
               style={{ borderColor: COLORS.border }}
             >
               <input
+                ref={searchInputRef}
                 className="border-none px-[10px] py-[6px] w-full focus:outline-none"
                 placeholder="Search Company"
                 value={search}
