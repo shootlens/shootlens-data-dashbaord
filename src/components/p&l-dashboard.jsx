@@ -167,7 +167,7 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
     };
 
     return (
-        <div className="rounded-2xl mt-8">
+        <div className="rounded-2xl">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
 
                 <ChartCard title="Sales vs Expenses">

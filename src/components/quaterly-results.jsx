@@ -12,7 +12,7 @@ import {
 import { Bar, Line } from "react-chartjs-2";
 import { COLORS } from "../constants";
 import { RxCross2 } from "react-icons/rx";
-import {MdOpenInFull} from "react-icons/md"
+import { MdOpenInFull } from "react-icons/md"
 
 
 ChartJS.register(
@@ -1023,32 +1023,6 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
 
   return (
     <div>
-      {/* Tabs header (kept commented for now)
-      <div className={`flex border-b`} style={{ borderColor: COLORS.border }}>
-        <button
-          onClick={() => setActiveTab("results")}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === "results"
-              ? "border-b-2 border-blue-600 text-blue-600"
-              : "text-gray-600 hover:text-gray-800"
-          }`}
-        >
-          Performance Overview
-        </button>
-        <button
-          onClick={() => setActiveTab("holding")}
-          className={`ml-4 px-4 py-2 text-sm font-medium ${
-            activeTab === "holding"
-              ? "border-b-2 border-blue-600 text-blue-600"
-              : "text-gray-600 hover:text-gray-800"
-          }`}
-        >
-          Shareholding Insights
-        </button>
-      </div>
-      */}
-
-      {/* {activeTab === "results" && ( */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ChartCard
           title="Sales, Expenses, Operating Profit, OPM %"
@@ -1147,8 +1121,6 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
             })
           }
         />
-
-        {/* New chart 1: CFO vs Net Profit */}
         <ChartCard
           title="CFO vs Net Profit (Earnings Quality)"
           takeaway="Shows how consistently reported net profit is supported by operating cash flows over all quarters."
@@ -1162,8 +1134,6 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
             })
           }
         />
-
-        {/* New chart 2: Interest Coverage Ratio */}
         <ChartCard
           title="Interest Coverage Ratio (Debt Servicing Strength)"
           takeaway="Tracks how many times operating profit covers interest expense across the available quarters."
@@ -1177,48 +1147,48 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
             })
           }
         />
-      </div>
-      {/* )} */}
-
-      {/* Optional advanced section */}
-      <div className="mt-8">
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">
-          📊 Advanced Long-Term Analytics (Optional View)
-        </h3>
-        <div
-          className="bg-white rounded-[10px] border p-4 overflow-x-auto"
-          style={{ borderColor: COLORS.border }}
-        >
-          <table className="min-w-full text-xs">
-            <thead>
-              <tr className="text-left text-gray-600">
-                <th className="px-2 py-1">Metric</th>
-                <th className="px-2 py-1 text-right">CAGR (%)</th>
-                <th className="px-2 py-1 text-right">Change (%)</th>
-                <th className="px-2 py-1 text-right">Ups vs Downs</th>
-              </tr>
-            </thead>
-            <tbody>
-              {advancedMetrics.map(({ label, stats }) => (
-                <tr key={label}>
-                  <td className="px-2 py-1 text-gray-700">{label}</td>
-                  <td className="px-2 py-1 text-right text-gray-700">
-                    {stats ? stats.cagr.toFixed(1) : "--"}
-                  </td>
-                  <td className="px-2 py-1 text-right text-gray-700">
-                    {stats ? stats.changePct.toFixed(1) : "--"}
-                  </td>
-                  <td className="px-2 py-1 text-right text-gray-700">
-                    {stats
-                      ? `${stats.numUp} up / ${stats.numDown} down`
-                      : "--"}
-                  </td>
+        <div>
+          <div
+            className="bg-white rounded-[10px] border p-4 overflow-x-auto"
+            style={{ borderColor: COLORS.border }}
+          >
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">
+              📊 Advanced Long-Term Analytics (Optional View)
+            </h3>
+            <table className="min-w-full text-xs mt-4">
+              <thead>
+                <tr className="text-left text-gray-600">
+                  <th className="px-2 py-1">Metric</th>
+                  <th className="px-2 py-1 text-right">CAGR (%)</th>
+                  <th className="px-2 py-1 text-right">Change (%)</th>
+                  <th className="px-2 py-1 text-right">Ups vs Downs</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {advancedMetrics.map(({ label, stats }) => (
+                  <tr key={label}>
+                    <td className="px-2 py-1 text-gray-700">{label}</td>
+                    <td className="px-2 py-1 text-right text-gray-700">
+                      {stats ? stats.cagr.toFixed(1) : "--"}
+                    </td>
+                    <td className="px-2 py-1 text-right text-gray-700">
+                      {stats ? stats.changePct.toFixed(1) : "--"}
+                    </td>
+                    <td className="px-2 py-1 text-right text-gray-700">
+                      {stats
+                        ? `${stats.numUp} up / ${stats.numDown} down`
+                        : "--"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+
+      {/* Optional advanced section */}
+
 
       {/* Fullscreen Modal */}
       {fullscreenChart && (
@@ -1232,7 +1202,7 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
                 onClick={() => setFullscreenChart(null)}
                 className=" cursor-pointer"
               >
-             <RxCross2/>
+                <RxCross2 />
               </button>
             </div>
             <div className="flex-1">
@@ -1269,7 +1239,7 @@ const ChartCard = ({
           onClick={onFullscreen}
           className="text-xs p-1 rounded-md border border-gray-300 hover:bg-gray-50 cursor-pointer"
         >
-          <MdOpenInFull/>
+          <MdOpenInFull />
 
         </button>
       )}

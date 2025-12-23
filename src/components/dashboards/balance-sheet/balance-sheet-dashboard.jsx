@@ -1291,7 +1291,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
         🧭 Debt Quality Radar
       </div>
       <div
-        className="bg-white rounded-lg border p-2 h-96"
+        className="bg-white rounded-lg border p-2"
         style={{ borderColor: COLORS.border }}
       >
         <div style={{ height: "calc(100vh - 63vh)" }}>

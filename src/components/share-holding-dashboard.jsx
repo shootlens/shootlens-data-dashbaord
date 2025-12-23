@@ -217,7 +217,7 @@ const ShareholdingCharts = ({ data }) => {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {compositionData && (
-                <div className="bg-white p-6 rounded shadow h-[400px]">
+                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
                     <h2 className="text-lg font-semibold mb-4">Shareholding Composition</h2>
                     <div className="h-80">
                         <Doughnut data={compositionData} options={baseOptions} />
@@ -226,7 +226,7 @@ const ShareholdingCharts = ({ data }) => {
             )}
 
             {trendData && (
-                <div className="bg-white p-6 rounded shadow h-[400px]">
+                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
                     <h2 className="text-lg font-semibold mb-4">Shareholding Trend</h2>
                     <div className="h-80">
                         <Line data={trendData} options={baseOptions} />
@@ -235,7 +235,7 @@ const ShareholdingCharts = ({ data }) => {
             )}
 
             {institutionalData && (
-                <div className="bg-white p-6 rounded shadow h-[400px]">
+                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
                     <h2 className="text-lg font-semibold mb-4">
                         Institutional vs Non-Institutional Ownership (%)
                     </h2>
@@ -246,7 +246,7 @@ const ShareholdingCharts = ({ data }) => {
             )}
 
             {promoterTrendData && (
-                <div className="bg-white p-6 rounded shadow h-[400px]">
+                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
                     <h2 className="text-lg font-semibold mb-4">Promoter Shareholding Trend</h2>
                     <div className="h-80">
                         <Line data={promoterTrendData} options={baseOptions} />
@@ -255,7 +255,7 @@ const ShareholdingCharts = ({ data }) => {
             )}
 
             {shareholdersData && (
-                <div className="bg-white p-6 rounded shadow h-[400px]">
+                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{borderColor:"#D1D5DB"}}>
                     <div className="flex items-center justify-between mb-3">
                         <h2 className="text-lg font-semibold">Number of Shareholders</h2>
                         {retailSentimentChart && (

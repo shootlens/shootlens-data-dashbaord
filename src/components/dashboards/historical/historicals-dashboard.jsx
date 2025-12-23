@@ -628,7 +628,7 @@ const HistoricalDashboard = ({ historicalData = [] }) => {
 
             {/* AI Insights */}
             <div className="animation-border p-[2px] rounded-[13px]">
-                <div className="p-[10px] border rounded-[12px] bg-white" style={{ borderColor: COLORS.border }}>
+                <div className="p-[10px] shadow-sm shadow-blue-300 rounded-[12px] bg-white" style={{ borderColor: COLORS.border }}>
                     <h3 className="text-lg font-semibold mb-3" style={{ color: COLORS.titleText }}>📊 Insights</h3>
                     <ul>{renderedInsights}</ul>
                 </div>

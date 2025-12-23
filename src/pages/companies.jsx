@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/common/header";
 import { rateLimitedFetch, BASE_URL, API_KEY } from "../utils/apiClient";
 import { COLORS } from "../constants";
+import { RiSlashCommands2 } from "react-icons/ri";
+import { BsCommand } from "react-icons/bs";
+import { TbLetterKSmall } from "react-icons/tb";
+
 
 const Companies = () => {
   const [companies, setCompanies] = useState([]);
@@ -177,11 +181,11 @@ const Companies = () => {
         <div className="px-[15px]">
 
           {/* Search + Total */}
-          <div className="text-sm font-medium py-4 sm:flex justify-between items-center flex-col md:flex-row">
+          <div className="text-sm font-medium py-4 sm:flex justify-between items-center md:flex-row">
 
             {/* Search Box */}
             <div
-              className="relative border rounded-[5px] md:w-1/3 mb-4 sm:my-0"
+              className="relative border rounded-[5px] md:w-1/3 mb-4 sm:my-0 flex items-center"
               style={{ borderColor: COLORS.border }}
             >
               <input
@@ -191,6 +195,14 @@ const Companies = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
+              {!search && <div className="flex items-center gap-1 mr-2">
+                <RiSlashCommands2 className="h-5 w-5 text-[#D1D5DB]" />
+                <div className="flex items-center border border-[#D1D5DB] rounded-[5px] pl-1">
+                  <BsCommand className="h-3 w-3 text-[#D1D5DB]" />
+                  <TbLetterKSmall className="h-4.5 w-4.5 text-[#D1D5DB]" />
+                </div>
+
+              </div>}
               {search && (
                 <button
                   onClick={() => setSearch("")}

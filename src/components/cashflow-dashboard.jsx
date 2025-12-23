@@ -1,4 +1,3 @@
-// src/components/CashFlowDashboard.jsx
 import React, { useState, useMemo } from "react";
 import {
   Chart as ChartJS,
@@ -17,9 +16,6 @@ import generateCashflowInsights from "../utils/nlpCashflow";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend, Filler);
 
-/* -------------------------
-   Helpers
---------------------------*/
 const normalizeKey = (str = "") => str.toLowerCase().replace(/\s+/g, " ").trim();
 
 const parseNumber = (v) => {
@@ -69,9 +65,6 @@ const getColorClassForPct = (pct) => {
   return NEU_STYLE;
 };
 
-/* ---------------------------
-   ChartCard component
-----------------------------*/
 const ChartCard = ({ title, chart, result, takeaway, insights, pct }) => {
   const colorClass = getColorClassForPct(pct);
 
@@ -111,9 +104,6 @@ const ChartCard = ({ title, chart, result, takeaway, insights, pct }) => {
   );
 };
 
-/* ---------------------------
-   Main Component
-----------------------------*/
 const CashFlowDashboard = ({ data }) => {
   const [activeTab, setActiveTab] = useState("trends");
   const [yearRange, setYearRange] = useState("all");
@@ -269,12 +259,8 @@ const CashFlowDashboard = ({ data }) => {
     combined: insights?.overall ?? fallbackResult("Net Cash Flow", NCF),
   };
 
-  /* --------------------------
-     Render UI
-  ---------------------------*/
   return (
-    <div className="py-6">
-      {/* Tabs */}
+    <div>
       <div className={`flex border-b border-[${COLORS.border}]`}>
         <button onClick={() => setActiveTab("trends")} className={`px-4 py-2 text-sm font-medium ${activeTab === "trends" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600"}`}>
           Cash Flow Trends
@@ -283,7 +269,6 @@ const CashFlowDashboard = ({ data }) => {
           Analytical Insights
         </button>
 
-        {/* Year Filter */}
         <div className="ml-auto">
           <select value={yearRange} onChange={(e) => setYearRange(e.target.value)} className="border rounded px-2 py-1 text-sm">
             <option value="all">All Years</option>
@@ -294,7 +279,6 @@ const CashFlowDashboard = ({ data }) => {
         </div>
       </div>
 
-      {/* TRENDS */}
       {activeTab === "trends" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6">
           <ChartCard title="Overall Cash Flow Overview" chart={<Bar data={combinedData} options={baseOptions} />} result={trendsText.combined} takeaway={relationships[0]} insights={perMetric.combined} pct={pct_combined} />
@@ -311,7 +295,6 @@ const CashFlowDashboard = ({ data }) => {
         </div>
       )}
 
-      {/* INSIGHTS */}
       {activeTab === "insights" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6">
           <ChartCard title="Operating vs Net Cash Flow" chart={<Bar data={ocfVsNcf} options={baseOptions} />} result={`${trendsText.ocf} / ${trendsText.ncf}`} takeaway={relationships[0]} insights={perMetric.ncf} pct={pct_ncf} />

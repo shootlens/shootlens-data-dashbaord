@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/common/header";
-import { rateLimitedFetch, fetchHistoricalData, BASE_URL, API_KEY } from "../utils/apiClient";
+import {
+  rateLimitedFetch,
+  fetchHistoricalData,
+  BASE_URL,
+  API_KEY,
+} from "../utils/apiClient";
 import DataTable from "../components/common/data-table";
 import QuarterlyResultsChart from "../components/quaterly-results";
 import ProfitLossDashboard from "../components/p&l-dashboard";
@@ -11,65 +16,69 @@ import CashFlowDashboard from "../components/cashflow-dashboard";
 import ROCEDashboard from "../components/roce-dashboard";
 import HistoricalDashboard from "../components/dashboards/historical/historicals-dashboard";
 import { COLORS } from "../constants";
-import { FiTrendingUp, FiBarChart2, FiActivity, FiPieChart, FiLayers } from "react-icons/fi";
+import {
+  FiTrendingUp,
+  FiBarChart2,
+  FiActivity,
+  FiPieChart,
+  FiLayers,
+} from "react-icons/fi";
 import { GiPriceTag } from "react-icons/gi";
 
 /* ---------------------------------------------------
-   🔹 Loader Component
+   Loader
 ----------------------------------------------------*/
 const Loader = () => (
   <div>
     <div className="w-full h-20 bg-gray-100 animate-pulse mb-5"></div>
     <div className="flex flex-col gap-1 px-5">
       <div className="w-1/3 h-10 bg-gray-100 animate-pulse mb-3 rounded-md"></div>
-      {[1, 2, 3, 4, 5].map(i => (
-        <div key={i} className="w-full h-3 bg-gray-100 animate-pulse rounded-full"></div>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div
+          key={i}
+          className="w-full h-3 bg-gray-100 animate-pulse rounded-full"
+        />
       ))}
     </div>
-
-    <div className="py-10 px-5">
-      <div className="w-1/5 h-9 bg-gray-100 animate-pulse mb-5 rounded-md"></div>
-      <div className="flex gap-5 flex-wrap w-full">
-        {[1, 2, 3, 4, 5].map(i => (
-          <div key={i} className="flex-1 h-30 bg-gray-100 animate-pulse mb-3 rounded-md border" style={{ borderColor: COLORS.border }}></div>
-        ))}
-      </div>
-    </div>
-
-    <div className="bg-gray-100 rounded-md border animate-pulse h-[220px] mb-10 mx-5" style={{ borderColor: COLORS.border }}></div>
-    <div className="bg-gray-100 rounded-md border animate-pulse h-90 mx-5" style={{ borderColor: COLORS.border }}></div>
   </div>
 );
 
+/* ---------------------------------------------------
+   Section Toggle
+----------------------------------------------------*/
 const Section = ({ title, show, onToggle, table, chart }) => (
   <div className="mt-8">
     <div className="flex items-center justify-between mb-3">
       <h2 className="text-lg font-semibold">{title}</h2>
       <button
         onClick={onToggle}
-        className="px-[6px] py-[3px] text-[14px] font-medium rounded border cursor-pointer"
+        className="px-[6px] py-[3px] text-[14px] font-medium rounded border"
         style={{ color: COLORS.secondaryText, borderColor: COLORS.border }}
       >
         {show ? "📊 Show Chart" : "📋 Show Table"}
       </button>
     </div>
-
     {show ? table : chart}
   </div>
 );
 
 /* ---------------------------------------------------
-   🔹 Main Component
+   Constants
 ----------------------------------------------------*/
+const COUNTDOWN_SECONDS = 60;
+
 const importantMetrics = [
-  { key: "Current Price", icon: <GiPriceTag size="100%" color={COLORS.icon} /> },
-  { key: "Market Cap", icon: <FiBarChart2 size="100%" color={COLORS.icon} /> },
-  { key: "P/E", icon: <FiTrendingUp size="100%" color={COLORS.icon} /> },
-  { key: "High / Low", icon: <FiActivity size="100%" color={COLORS.icon} /> },
-  { key: "ROE", icon: <FiPieChart size="100%" color={COLORS.icon} /> },
-  { key: "ROCE", icon: <FiLayers size="100%" color={COLORS.icon} /> },
+  { key: "Current Price", icon: <GiPriceTag color={COLORS.icon} /> },
+  { key: "Market Cap", icon: <FiBarChart2 color={COLORS.icon} /> },
+  { key: "P/E", icon: <FiTrendingUp color={COLORS.icon} /> },
+  { key: "High / Low", icon: <FiActivity color={COLORS.icon} /> },
+  { key: "ROE", icon: <FiPieChart color={COLORS.icon} /> },
+  { key: "ROCE", icon: <FiLayers color={COLORS.icon} /> },
 ];
 
+/* ---------------------------------------------------
+   Main Component
+----------------------------------------------------*/
 const CompanyDetails = () => {
   const { symbol } = useParams();
 
@@ -77,6 +86,7 @@ const CompanyDetails = () => {
   const [historicalData, setHistoricalData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [count, setCount] = useState(COUNTDOWN_SECONDS);
 
   const [view, setView] = useState({
     qr: true,
@@ -88,56 +98,11 @@ const CompanyDetails = () => {
     dashboard: true,
   });
 
-  const toggle = (key) => setView((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggle = (key) =>
+    setView((prev) => ({ ...prev, [key]: !prev[key] }));
 
   /* ---------------------------------------------------
-     🔥 FIXED COUNTDOWN SYSTEM (timestamp-based)
-  ----------------------------------------------------*/
-  const COUNTDOWN_SECONDS = 60;
-
-  const [count, setCount] = useState(() => {
-    const endTime = localStorage.getItem(`countdown_end_${symbol}`);
-    if (endTime) {
-      const remaining = Math.floor((Number(endTime) - Date.now()) / 1000);
-      return remaining > 0 ? remaining : 0;
-    }
-    return COUNTDOWN_SECONDS;
-  });
-
-  useEffect(() => {
-    let endTime = localStorage.getItem(`countdown_end_${symbol}`);
-    let hasRefreshed = localStorage.getItem(`refreshed_once_${symbol}`);
-
-    // If no endTime exists, create one
-    if (!endTime) {
-      endTime = Date.now() + COUNTDOWN_SECONDS * 1000;
-      localStorage.setItem(`countdown_end_${symbol}`, endTime);
-    }
-
-    const timer = setInterval(() => {
-      const remaining = Math.floor((Number(endTime) - Date.now()) / 1000);
-      setCount(remaining > 0 ? remaining : 0);
-
-      if (remaining <= 0) {
-        clearInterval(timer);
-
-        // Remove countdown from localStorage
-        localStorage.removeItem(`countdown_end_${symbol}`);
-
-        // Refresh only ONE time
-        if (!hasRefreshed) {
-          localStorage.setItem(`refreshed_once_${symbol}`, "1");
-          window.location.reload();
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [symbol]);
-
-
-  /* ---------------------------------------------------
-     🔹 Load API
+     Load API
   ----------------------------------------------------*/
   useEffect(() => {
     const loadData = async () => {
@@ -164,22 +129,85 @@ const CompanyDetails = () => {
   }, [symbol]);
 
   /* ---------------------------------------------------
-     🔹 Error / Limit Handling
+     API LIMIT COUNTDOWN (ONLY WHEN LIMITED)
+  ----------------------------------------------------*/
+  const isApiLimited = !loading && !company?.data;
+
+  useEffect(() => {
+    if (!isApiLimited) {
+      localStorage.removeItem(`countdown_end_${symbol}`);
+      localStorage.removeItem(`refreshed_once_${symbol}`);
+      setCount(COUNTDOWN_SECONDS);
+      return;
+    }
+
+    let endTime = localStorage.getItem(`countdown_end_${symbol}`);
+    let refreshed = localStorage.getItem(`refreshed_once_${symbol}`);
+
+    if (!endTime) {
+      endTime = Date.now() + COUNTDOWN_SECONDS * 1000;
+      localStorage.setItem(`countdown_end_${symbol}`, endTime);
+    }
+
+    const timer = setInterval(() => {
+      const remaining = Math.floor(
+        (Number(endTime) - Date.now()) / 1000
+      );
+      setCount(remaining > 0 ? remaining : 0);
+
+      if (remaining <= 0) {
+        clearInterval(timer);
+        localStorage.removeItem(`countdown_end_${symbol}`);
+
+        if (!refreshed) {
+          localStorage.setItem(`refreshed_once_${symbol}`, "1");
+          window.location.reload();
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [symbol, isApiLimited]);
+
+  /* ---------------------------------------------------
+     Loading / Error
   ----------------------------------------------------*/
   if (loading) return <Loader />;
-  if (error) return <div className="text-center text-red-600">{error}</div>;
+  if (error)
+    return <div className="text-center text-red-600">{error}</div>;
 
-  if (!company?.data)
+  /* ---------------------------------------------------
+     API LIMIT UI
+  ----------------------------------------------------*/
+  if (!company?.data) {
+    const progress =
+      ((COUNTDOWN_SECONDS - count) / COUNTDOWN_SECONDS) * 100;
+
     return (
-      <div className="flex items-center justify-center w-full h-screen text-3xl text-gray-500 flex-wrap">
-        API Limit!
-        <span className="text-cyan-900 mx-3">
-          {count === 0 ? "Refresh Now" : `Refresh After ${count}`}
-        </span>
+      <div className="flex flex-col items-center justify-center w-full h-screen px-6">
+        <h1 className="text-3xl font-semibold text-gray-600 mb-4">
+          API Limit Reached
+        </h1>
+
+        <div className="w-full max-w-md bg-gray-200 rounded-full h-3 overflow-hidden mb-3">
+          <div
+            className="h-3 bg-blue-600 transition-all"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+
+        <p className="text-lg text-gray-500">
+          Refreshing in <b>{count}s</b>
+        </p>
       </div>
     );
+  }
 
+  /* ---------------------------------------------------
+     Normal Render
+  ----------------------------------------------------*/
   const financials = company.data;
+
   return (
     <div className="pb-6">
       <Header
@@ -193,7 +221,10 @@ const CompanyDetails = () => {
               setView(newState);
             }}
             className="px-[6px] py-[3px] text-[14px] font-medium rounded border cursor-pointer"
-            style={{ color: COLORS.secondaryText, borderColor: COLORS.border }}
+            style={{
+              color: COLORS.secondaryText,
+              borderColor: COLORS.border,
+            }}
           >
             {view.dashboard ? "📊 Dashboard Mode" : "📋 Table Mode"}
           </button>
@@ -201,28 +232,33 @@ const CompanyDetails = () => {
       />
 
       <div className="md:px-6 pt-6 px-3">
-        <h1 className="text-2xl font-bold mb-3" style={{ color: COLORS.companyTitle }}>
+        <h1
+          className="text-2xl font-bold mb-3"
+          style={{ color: COLORS.companyTitle }}
+        >
           {company.company}
         </h1>
 
-        <p className="text-sm leading-normal" style={{ color: COLORS.companyDescription }}>
+        <p
+          className="text-sm leading-normal"
+          style={{ color: COLORS.companyDescription }}
+        >
           {financials.about}
         </p>
 
         {/* Top Ratios */}
         <div className="py-6">
           <h2 className="text-lg font-semibold mb-2">Top Ratios</h2>
-
-          <div className="flex flex-wrap gap-4">
+          <div className="sm:flex flex-wrap gap-4 sm:justify-around  rounded-[10px] mt-2 shadow-sm shadow-blue-300"style={{ borderColor: COLORS.border }}>
             {importantMetrics.map(({ key, icon }) =>
               financials.top_ratios?.[key] ? (
                 <div
                   key={key}
-                  className="bg-white p-4 rounded-lg border min-w-[260px] flex-1"
-                  style={{ borderColor: COLORS.border }}
+                  className="bg-white p-4 rounded-lg"
+                  
                 >
                   <div className="flex gap-2 mb-1 items-center">
-                    <div className="h-6 w-6">{icon}</div>
+                    {icon}
                     <span className="text-md font-medium">{key}</span>
                   </div>
                   <div className="text-3xl font-semibold text-blue-800">
@@ -234,16 +270,18 @@ const CompanyDetails = () => {
           </div>
         </div>
 
-        {/* Historical */}
         <HistoricalDashboard historicalData={historicalData} />
 
-        {/* Sections */}
         <Section
           title="Quarterly Results"
           show={view.qr}
           onToggle={() => toggle("qr")}
           table={<DataTable data={financials.quaterly_results} />}
-          chart={<QuarterlyResultsChart quarterlyData={financials.quaterly_results} />}
+          chart={
+            <QuarterlyResultsChart
+              quarterlyData={financials.quaterly_results}
+            />
+          }
         />
 
         <Section
@@ -251,7 +289,11 @@ const CompanyDetails = () => {
           show={view.pl}
           onToggle={() => toggle("pl")}
           table={<DataTable data={financials.profit_and_loss} />}
-          chart={<ProfitLossDashboard profitLossData={financials.profit_and_loss} />}
+          chart={
+            <ProfitLossDashboard
+              profitLossData={financials.profit_and_loss}
+            />
+          }
         />
 
         <Section
@@ -259,7 +301,11 @@ const CompanyDetails = () => {
           show={view.bs}
           onToggle={() => toggle("bs")}
           table={<DataTable data={financials.balance_sheet} />}
-          chart={<BalanceSheetDashboard balance_sheet={financials.balance_sheet} />}
+          chart={
+            <BalanceSheetDashboard
+              balance_sheet={financials.balance_sheet}
+            />
+          }
         />
 
         <Section
@@ -283,7 +329,11 @@ const CompanyDetails = () => {
           show={view.sh}
           onToggle={() => toggle("sh")}
           table={<DataTable data={financials.shareholding_quarterly} />}
-          chart={<ShareholdingCharts data={financials.shareholding_quarterly} />}
+          chart={
+            <ShareholdingCharts
+              data={financials.shareholding_quarterly}
+            />
+          }
         />
 
         <p className="text-xs text-gray-400 mt-4">
@@ -293,7 +343,7 @@ const CompanyDetails = () => {
             : "N/A"}
         </p>
 
-        <p className="text-[14px] text-[#6B7280] font-medium leading-normal pt-2 pb-3">
+        <p className="text-[14px] text-[#6B7280] pt-3">
           Made With 💚 by Ragava
         </p>
       </div>
