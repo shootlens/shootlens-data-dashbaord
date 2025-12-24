@@ -80,13 +80,13 @@ const CompanyDetails = () => {
   const [count, setCount] = useState(COUNTDOWN_SECONDS);
 
   const [view, setView] = useState({
-    qr: false,
-    pl: false,
-    sh: false,
-    bs: false,
-    cf: false,
-    ratios: false,
-    dashboard: false,
+    qr: true,
+    pl: true,
+    sh: true,
+    bs: true,
+    cf: true,
+    ratios: true,
+    dashboard: true,
   });
 
   const toggle = (key) =>
