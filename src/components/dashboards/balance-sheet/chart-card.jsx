@@ -1,6 +1,6 @@
 import { COLORS } from "../../../constants";
 import ResultPanel from "./result-panel";
-import {MdOpenInFull} from "react-icons/md"
+import { MdOpenInFull } from "react-icons/md"
 
 const ChartCard = ({
   title,
@@ -36,7 +36,7 @@ const ChartCard = ({
       style={{ borderColor: COLORS.border }}
     >
       {/* <div className="text-sm font-medium">User Takeaway</div> */}
-      <p className="text-[14px] mt-1 mb-2" style={{color:COLORS.secondaryText}}>{text}</p>
+      <p className="text-[14px] mt-1 mb-2" style={{ color: COLORS.secondaryText }}>{text}</p>
     </div>
   );
   return (
@@ -46,10 +46,10 @@ const ChartCard = ({
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-md font-medium leading-none" style={{color:COLORS.titleText}}>{title}</div>
-        <Takeaway text={takeaway} />
+          <div className="text-md font-medium leading-none" style={{ color: COLORS.titleText }}>{title}</div>
+          <Takeaway text={takeaway} />
         </div>
-        
+
         {onFullscreen && (
           <div
             onClick={onFullscreen}
@@ -60,7 +60,7 @@ const ChartCard = ({
         )}
       </div>
       <ResultPanel title={title} text={result} pct={pct} />
-      
+
       {aiSummary && (
         <p className="mt-2 text-[11px] text-gray-600 italic">
           🧠 AI Summary: {aiSummary}

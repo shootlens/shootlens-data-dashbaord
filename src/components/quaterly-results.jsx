@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,8 +11,8 @@ import {
 } from "chart.js";
 import { Bar, Line } from "react-chartjs-2";
 import { COLORS } from "../constants";
-import { RxCross2 } from "react-icons/rx";
 import { MdOpenInFull } from "react-icons/md"
+import FullScreenModal from "./common/full-screen-modal";
 
 
 ChartJS.register(
@@ -1186,30 +1186,12 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
           </div>
         </div>
       </div>
-
-      {/* Optional advanced section */}
-
-
-      {/* Fullscreen Modal */}
       {fullscreenChart && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-xl w-[95vw] h-[90vh] p-4 flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-gray-700 flex-1">
-                {fullscreenChart.title}
-              </h2>
-              <button
-                onClick={() => setFullscreenChart(null)}
-                className=" cursor-pointer"
-              >
-                <RxCross2 />
-              </button>
-            </div>
-            <div className="flex-1">
-              <div className="w-full h-full">{fullscreenChart.chart}</div>
-            </div>
-          </div>
-        </div>
+        <FullScreenModal
+          title={fullscreenChart.title}
+          onClose={() => setFullscreenChart(null)}
+          chart={fullscreenChart.chart}
+        />
       )}
     </div>
   );

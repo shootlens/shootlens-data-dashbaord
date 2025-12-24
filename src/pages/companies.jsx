@@ -12,8 +12,8 @@ const Companies = () => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [search, setSearch] = useState(""); // live typing
-  const [debouncedSearch, setDebouncedSearch] = useState(""); // delayed search
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const searchInputRef = useRef(null);
 
   const navigate = useNavigate();
@@ -23,16 +23,13 @@ const Companies = () => {
     const handleKeyDown = (e) => {
       const tag = document.activeElement.tagName;
 
-      // Ignore if already typing in input or textarea
       if (tag === "INPUT" || tag === "TEXTAREA") return;
 
-      // Ctrl + K / Cmd + K
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         searchInputRef.current?.focus();
       }
 
-      // Slash "/"
       if (e.key === "/") {
         e.preventDefault();
         searchInputRef.current?.focus();
@@ -64,9 +61,6 @@ const Companies = () => {
     loadData();
   }, []);
 
-  // -------------------------------
-  // Debounce search (300ms)
-  // -------------------------------
   useEffect(() => {
     const t = setTimeout(() => {
       setDebouncedSearch(search.trim().toLowerCase());
@@ -75,9 +69,7 @@ const Companies = () => {
     return () => clearTimeout(t);
   }, [search]);
 
-  // -------------------------------
-  // Helper: Highlight matched letters
-  // -------------------------------
+
   const highlightMatch = (text, query) => {
     if (!query) return text;
 
@@ -162,7 +154,6 @@ const Companies = () => {
     <div>
       <Header hideCount hasGradient />
       <div>
-        {/* HERO SECTION */}
         <div className="hidden md:block">
           <div className="flex items-center justify-center bg-gradient-to-r from-[rgb(251,251,251)] via-[rgb(206,220,244)] to-[rgb(213,225,244)] h-[94vh] relative">
             <div className="absolute top-[35%]">
@@ -176,14 +167,8 @@ const Companies = () => {
             </div>
           </div>
         </div>
-
-        {/* CONTENT */}
         <div className="px-[15px]">
-
-          {/* Search + Total */}
           <div className="text-sm font-medium py-4 sm:flex justify-between items-center md:flex-row">
-
-            {/* Search Box */}
             <div
               className="relative border rounded-[5px] md:w-1/3 mb-4 sm:my-0 flex items-center"
               style={{ borderColor: COLORS.border }}
@@ -212,8 +197,6 @@ const Companies = () => {
                 </button>
               )}
             </div>
-
-            {/* Total Count */}
             <div className="flex items-center gap-2">
               <span>Total:</span>
               <span className="text-[16px] font-semibold">
@@ -221,8 +204,6 @@ const Companies = () => {
               </span>
             </div>
           </div>
-
-          {/* Scrollable Table Container */}
           <div className="h-[79vh] overflow-y-auto" style={{ borderColor: COLORS.border }}>
             <table className="table-auto border w-full">
               <thead className="border-b bg-gray-100 overflow-hidden" style={{ borderColor: COLORS.border }}>

@@ -17,14 +17,8 @@ const SummaryPanel = ({ ai }) => {
                 className="bg-white rounded-[12px] p-4"
                 style={{ borderColor: COLORS.border }}
             >
-                <div className="flex flex-col md:flex-row">
+                <div className="flex flex-col-reverse md:flex-row">
                     <div>
-                        <h2
-                            className="text-xl font-semibold mb-3"
-                            style={{ color: "#69b830" }}
-                        >
-                            Balance Sheet Summary
-                        </h2>
                         <p
                             className="text-[14px] mt-2"
                             style={{ color: COLORS.secondaryText }}
@@ -47,7 +41,7 @@ const SummaryPanel = ({ ai }) => {
                         </ul>
                     </div>
 
-                    <div className="text-right" style={{ minWidth: 160 }}>
+                    <div className="md:text-right" style={{ minWidth: 160 }}>
                         <div className="text-sm text-gray-500">Health Score</div>
                         <div
                             style={{ fontSize: 28, fontWeight: 700, color: scoreColor }}
@@ -67,7 +61,7 @@ const SummaryPanel = ({ ai }) => {
                                 Top Recommendations
                             </div>
                             <ul
-                                className="ml-5 mt-2 text-[14px]"
+                                className="md:ml-5 mt-2 text-[14px]"
                                 style={{ color: COLORS.secondaryText }}
                             >
                                 {(recommendations || []).slice(0, 3).map((r, i) => (

@@ -25,9 +25,6 @@ import {
 } from "react-icons/fi";
 import { GiPriceTag } from "react-icons/gi";
 
-/* ---------------------------------------------------
-   Loader
-----------------------------------------------------*/
 const Loader = () => (
   <div>
     <div className="w-full h-20 bg-gray-100 animate-pulse mb-5"></div>
@@ -52,7 +49,7 @@ const Section = ({ title, show, onToggle, table, chart }) => (
       <h2 className="text-lg font-semibold">{title}</h2>
       <button
         onClick={onToggle}
-        className="px-[6px] py-[3px] text-[14px] font-medium rounded border"
+        className="px-[6px] py-[3px] text-[14px] font-medium rounded border cursor-pointer"
         style={{ color: COLORS.secondaryText, borderColor: COLORS.border }}
       >
         {show ? "📊 Show Chart" : "📋 Show Table"}
@@ -62,9 +59,6 @@ const Section = ({ title, show, onToggle, table, chart }) => (
   </div>
 );
 
-/* ---------------------------------------------------
-   Constants
-----------------------------------------------------*/
 const COUNTDOWN_SECONDS = 60;
 
 const importantMetrics = [
@@ -76,9 +70,6 @@ const importantMetrics = [
   { key: "ROCE", icon: <FiLayers color={COLORS.icon} /> },
 ];
 
-/* ---------------------------------------------------
-   Main Component
-----------------------------------------------------*/
 const CompanyDetails = () => {
   const { symbol } = useParams();
 
@@ -89,21 +80,18 @@ const CompanyDetails = () => {
   const [count, setCount] = useState(COUNTDOWN_SECONDS);
 
   const [view, setView] = useState({
-    qr: true,
-    pl: true,
-    sh: true,
-    bs: true,
-    cf: true,
-    ratios: true,
-    dashboard: true,
+    qr: false,
+    pl: false,
+    sh: false,
+    bs: false,
+    cf: false,
+    ratios: false,
+    dashboard: false,
   });
 
   const toggle = (key) =>
     setView((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  /* ---------------------------------------------------
-     Load API
-  ----------------------------------------------------*/
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -128,9 +116,6 @@ const CompanyDetails = () => {
     loadData();
   }, [symbol]);
 
-  /* ---------------------------------------------------
-     API LIMIT COUNTDOWN (ONLY WHEN LIMITED)
-  ----------------------------------------------------*/
   const isApiLimited = !loading && !company?.data;
 
   useEffect(() => {
@@ -169,16 +154,10 @@ const CompanyDetails = () => {
     return () => clearInterval(timer);
   }, [symbol, isApiLimited]);
 
-  /* ---------------------------------------------------
-     Loading / Error
-  ----------------------------------------------------*/
   if (loading) return <Loader />;
   if (error)
     return <div className="text-center text-red-600">{error}</div>;
 
-  /* ---------------------------------------------------
-     API LIMIT UI
-  ----------------------------------------------------*/
   if (!company?.data) {
     const progress =
       ((COUNTDOWN_SECONDS - count) / COUNTDOWN_SECONDS) * 100;
@@ -203,9 +182,6 @@ const CompanyDetails = () => {
     );
   }
 
-  /* ---------------------------------------------------
-     Normal Render
-  ----------------------------------------------------*/
   const financials = company.data;
 
   return (
@@ -246,16 +222,15 @@ const CompanyDetails = () => {
           {financials.about}
         </p>
 
-        {/* Top Ratios */}
-        <div className="py-6">
-          <h2 className="text-lg font-semibold mb-2">Top Ratios</h2>
-          <div className="sm:flex flex-wrap gap-4 sm:justify-around  rounded-[10px] mt-2 shadow-sm shadow-blue-300"style={{ borderColor: COLORS.border }}>
+        <div className=" pt-3">
+          {/* <h2 className="text-lg font-semibold mb-2">Top Ratios</h2> */}
+          <div className="sm:flex flex-wrap gap-4 sm:justify-around  rounded-[10px] mt-2 border border-[#D1D5DB]" style={{ borderColor: COLORS.border }}>
             {importantMetrics.map(({ key, icon }) =>
               financials.top_ratios?.[key] ? (
                 <div
                   key={key}
-                  className="bg-white p-4 rounded-lg"
-                  
+                  className="p-6"
+
                 >
                   <div className="flex gap-2 mb-1 items-center">
                     {icon}
@@ -270,7 +245,19 @@ const CompanyDetails = () => {
           </div>
         </div>
 
-        <HistoricalDashboard historicalData={historicalData} />
+        <Section
+          title="Balance Sheet"
+          show={view.bs}
+          onToggle={() => toggle("bs")}
+          table={<DataTable data={financials.balance_sheet} />}
+          chart={
+            <BalanceSheetDashboard
+              balance_sheet={financials.balance_sheet}
+            />
+          }
+        />
+
+        <div className="mt-8"><HistoricalDashboard historicalData={historicalData} /></div>
 
         <Section
           title="Quarterly Results"
@@ -292,18 +279,6 @@ const CompanyDetails = () => {
           chart={
             <ProfitLossDashboard
               profitLossData={financials.profit_and_loss}
-            />
-          }
-        />
-
-        <Section
-          title="Balance Sheet"
-          show={view.bs}
-          onToggle={() => toggle("bs")}
-          table={<DataTable data={financials.balance_sheet} />}
-          chart={
-            <BalanceSheetDashboard
-              balance_sheet={financials.balance_sheet}
             />
           }
         />
@@ -343,9 +318,15 @@ const CompanyDetails = () => {
             : "N/A"}
         </p>
 
-        <p className="text-[14px] text-[#6B7280] pt-3">
-          Made With 💚 by Ragava
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-[12px] text-[#6B7280] pt-3">
+            This project is for educational purposes and is based on standalone data.
+          </p>
+          <p className="text-[14px] text-[#6B7280] pt-3">
+            Made With 💚 by Ragava
+          </p>
+
+        </div>
       </div>
     </div>
   );

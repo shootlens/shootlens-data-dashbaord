@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -13,6 +13,10 @@ import {
 } from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
 import { COLORS } from "../constants";
+import FullScreenModal from "./common/full-screen-modal";
+import { MdOpenInFull } from "react-icons/md";
+
+
 
 ChartJS.register(
     CategoryScale,
@@ -25,6 +29,9 @@ ChartJS.register(
     Legend,
     Filler
 );
+
+
+
 
 const parseValue = (v) => {
     if (v == null) return 0;
@@ -166,43 +173,85 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
         },
     };
 
+    const [fullscreenChart, setFullscreenChart] = useState(null);
     return (
         <div className="rounded-2xl">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
 
-                <ChartCard title="Sales vs Expenses">
+                <ChartCard title="Sales vs Expenses" onFullscreen={() =>
+                    setFullscreenChart({
+                        title: "Sales vs Expenses",
+                        chart: <Bar data={salesVsExpenses} options={baseOptions} />,
+                    })
+                }>
                     <Bar data={salesVsExpenses} options={baseOptions} />
                 </ChartCard>
 
-                <ChartCard title="Operating Profit Breakdown">
+                <ChartCard title="Operating Profit Breakdown" onFullscreen={() =>
+                    setFullscreenChart({
+                        title: "Operating Profit Breakdown",
+                        chart: <Bar data={operatingBreakdown} options={baseOptions} />,
+                    })
+                }>
                     <Bar data={operatingBreakdown} options={baseOptions} />
                 </ChartCard>
 
-                <ChartCard title="Profit Before Tax vs Net Profit">
+                <ChartCard title="Operating Profit Breakdown" onFullscreen={() =>
+                    setFullscreenChart({
+                        title: "Operating Profit Breakdown",
+                        chart: <Line data={profitComparison} options={baseOptions} />
+                    })
+                }>
                     <Line data={profitComparison} options={baseOptions} />
                 </ChartCard>
 
-                <ChartCard title="Dividend Payout %">
+                <ChartCard title="Dividend Payout %" onFullscreen={() =>
+                    setFullscreenChart({
+                        title: "Dividend Payout %",
+                        chart: <Line data={dividendPayout} options={baseOptions} />
+                    })
+                }>
                     <Line data={dividendPayout} options={baseOptions} />
                 </ChartCard>
 
-                <ChartCard title="Tax % Variation">
+                <ChartCard title="Tax % Variation" onFullscreen={() =>
+                    setFullscreenChart({
+                        title: "Tax % Variation",
+                        chart: <Bar data={taxVariation} options={baseOptions} />
+                    })
+                }>
                     <Bar data={taxVariation} options={baseOptions} />
                 </ChartCard>
 
             </div>
+
+            {fullscreenChart && (
+                <FullScreenModal chart={fullscreenChart.chart} title={fullscreenChart.title} onClose={() => setFullscreenChart(false)} />
+            )}
         </div>
     );
 };
 
-const ChartCard = ({ title, children }) => (
+const ChartCard = ({ title, children, onFullscreen }) => (
     <div
-        className="bg-white rounded-2xl border p-4 h-96"
+        className="bg-white rounded-2xl border p-4 h-96 relative"
         style={{ borderColor: COLORS.border }}
     >
-        <h3 className="text-lg font-semibold mb-2">{title}</h3>
+        <div className="flex items-center justify-between mb-2">
+            <h3 className="text-lg font-semibold">{title}</h3>
+
+            <button
+                onClick={onFullscreen}
+                className="border rounded-[5px] p-1 hover:bg-gray-50 text-gray-600 cursor-pointer"
+                title="View Fullscreen"
+            >
+                <MdOpenInFull size="11px" />
+            </button>
+        </div>
+
         <div className="h-80">{children}</div>
     </div>
 );
+
 
 export default ProfitLossDashboard;

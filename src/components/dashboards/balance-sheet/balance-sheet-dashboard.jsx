@@ -13,15 +13,14 @@ import {
   RadialLinearScale,
 } from "chart.js";
 import { Doughnut, Line, Bar, Radar } from "react-chartjs-2";
-import { COLORS } from "../../../constants";
+import { COLORS, getHeatColor } from "../../../constants";
 import generateBalanceSheetInsights from "../../../utils/nlpBalanceSheet";
 import ChartCard from "./chart-card";
 import MetricCards from "./metric-cards";
 import "../../../App.css";
 import SummaryPanel from "./summary";
-import { RxCross2 } from "react-icons/rx";
+import FullScreenModal from "../../common/full-screen-modal";
 
-// Register ChartJS
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -35,7 +34,6 @@ ChartJS.register(
   RadialLinearScale
 );
 
-// Helpers
 const normalizeKey = (str = "") => String(str || "").toLowerCase().trim();
 
 const parseNumber = (val) => {
@@ -49,13 +47,11 @@ const parseNumber = (val) => {
   return isNaN(n) ? 0 : n;
 };
 
-// Try to pull out a 4-digit year from any label (e.g. "FY21-22", "Mar 2023")
 const extractYear = (label) => {
   const match = String(label).match(/\d{4}/);
   return match ? parseInt(match[0], 10) : null;
 };
 
-// Alias map so we can handle different row headings from different companies
 const ALIASES = {
   "fixed assets": [
     "fixed assets",
@@ -89,7 +85,6 @@ const ALIASES = {
   borrowings: ["borrowings", "long-term borrowings", "total borrowings"],
 };
 
-// Small helper for ultra-short AI summary based on YoY series
 const buildTrendSummary = (yoySeries, label) => {
   if (!yoySeries || yoySeries.length === 0) return "";
   const vals = yoySeries.filter((v) => isFinite(v));
@@ -189,10 +184,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
 
   const totalAssets = totalAssetsSeries[latestIdx] || 0;
   const totalLiabilities = totalLiabilitiesSeries[latestIdx] || 0;
-  const equityCapital = equitySeries[latestIdx] || 0;
-  const reserves = reservesSeries[latestIdx] || 0;
   const borrowings = borrowingsSeries[latestIdx] || 0;
-  const otherLiabilities = otherLiabilitiesSeries[latestIdx] || 0;
 
   const netWorthSeries = years.map(
     (_, i) => (equitySeries[i] || 0) + (reservesSeries[i] || 0)
@@ -296,8 +288,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     },
   };
 
-  // MAIN CHARTS
-
   const chartMainAssetsTrend = {
     labels: years,
     datasets: [
@@ -376,7 +366,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     ],
   };
 
-  // Solvency gap – full-year only (no TTM)
   const chartSolvencyGap = {
     labels: fullYearLabels,
     datasets: [
@@ -390,9 +379,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     ],
   };
 
-  // ADVANCED CHARTS
-
-  // latestIdx is already last full-year if TTM exists
   const latestIdxForBreakdown = latestIdx;
   const chartLatestAssets = {
     labels: assetsRows,
@@ -488,43 +474,31 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     { label: "Reserves", yoy: yoyReserves },
   ];
 
-  const getHeatColor = (pctVal) => {
-    if (!isFinite(pctVal)) return "bg-gray-100";
-    if (pctVal > 15) return "bg-green-600 text-white";
-    if (pctVal > 0) return "bg-green-200 text-green-800";
-    if (pctVal < -15) return "bg-red-600 text-white";
-    if (pctVal < 0) return "bg-red-200 text-red-800";
-    return "bg-gray-100";
-  };
 
-  // 🔥 Advanced ML-style Risk Score & Stability
+
 
   const computeRiskScore = () => {
     let score = 100;
 
-    // 1️⃣ Leverage / Solvency Factors
     const de = debtToEquity;
     const lastFullAssetsValue =
       assetsFull.length > 0 ? assetsFull[assetsFull.length - 1] : 0;
     const liabilitiesToAssets =
       lastFullAssetsValue > 0
         ? (liabilitiesFull[liabilitiesFull.length - 1] /
-            lastFullAssetsValue) *
-          100
+          lastFullAssetsValue) *
+        100
         : 0;
 
-    // D/E penalty (non-linear)
     if (de > 2.5) score -= 35;
     else if (de > 2) score -= 28;
     else if (de > 1.5) score -= 20;
     else if (de > 1.0) score -= 12;
     else if (de > 0.5) score -= 5;
 
-    // Liabilities dominance penalty
     if (liabilitiesToAssets > 75) score -= 20;
     else if (liabilitiesToAssets > 60) score -= 10;
 
-    // 2️⃣ Debt Growth Quality
     const borrowVsNW = borrowingsCagr - netWorthCagr;
     const borrowVsAssets = borrowingsCagr - assetsCagr;
 
@@ -532,7 +506,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     if (borrowVsAssets > 10) score -= 12;
     if (borrowingsCagr > 20) score -= 10;
 
-    // 3️⃣ Solvency Gap (ML-style comparative change)
     if (assetsFull.length > 1 && liabilitiesFull.length > 1) {
       const firstGap = (assetsFull[0] || 0) - (liabilitiesFull[0] || 0);
       const lastGap =
@@ -543,12 +516,11 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
           ? ((lastGap - firstGap) / Math.abs(firstGap)) * 100
           : 0;
 
-      if (gapChangePct < -20) score -= 15; // solvency worsened
+      if (gapChangePct < -20) score -= 15;
       else if (gapChangePct < 0) score -= 8;
-      else if (gapChangePct > 20) score += 5; // reward improving solvency
+      else if (gapChangePct > 20) score += 5;
     }
 
-    // 4️⃣ Stability / Volatility Factor
     const volatility = (() => {
       const all = [...yoyAssets, ...yoyLiabilities, ...yoyBorrowings];
       const vals = all.filter((v) => isFinite(v));
@@ -559,20 +531,17 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
       return Math.sqrt(variance);
     })();
 
-    if (volatility > 30) score -= 18; // extremely unstable
+    if (volatility > 30) score -= 18;
     else if (volatility > 20) score -= 10;
     else if (volatility > 12) score -= 5;
-    else score += 3; // reward very stable companies
+    else score += 3;
 
-    // 5️⃣ Liquidity Proxy (using reserves trend)
     if (reservesCagr < 0) score -= 10;
     else if (reservesCagr < 5) score -= 3;
     else score += 2;
 
-    // Final normalize
     score = Math.max(1, Math.min(100, score));
 
-    // Classification
     let label = "Moderate Risk";
     let color = "#f59e0b";
     let emoji = "🟡";
@@ -587,7 +556,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
       emoji = "🔴";
     }
 
-    // Reasons (AI-style)
     const reasons = [];
 
     if (de > 1.5)
@@ -605,13 +573,12 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
         "Stable leverage, healthy solvency, and balanced growth across the balance sheet."
       );
 
-    // Forward Risk Projection
     const forecast =
       borrowVsNW > 8
         ? "Risk may rise if borrowings continue to outpace net worth over the next few years."
         : de < 1
-        ? "Risk is likely to remain low unless liabilities spike sharply."
-        : "Overall risk is moderate; monitor leverage and solvency trends over coming years.";
+          ? "Risk is likely to remain low unless liabilities spike sharply."
+          : "Overall risk is moderate; monitor leverage and solvency trends over coming years.";
 
     return { score, label, color, emoji, reasons, forecast };
   };
@@ -664,8 +631,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
   const risk = computeRiskScore();
   const stability = computeStabilityRating();
 
-  // Financial Strength Gauge (Doughnut semi-circle)
-  const gaugeScore = risk.score; // reuse for now
+  const gaugeScore = risk.score;
   const gaugeColor =
     gaugeScore >= 70 ? "#16a34a" : gaugeScore >= 40 ? "#f59e0b" : "#dc2626";
   const chartGauge = {
@@ -691,7 +657,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     },
   };
 
-  // Debt Quality Radar – full-year only metrics
   const lastFullAssetsValueForRadar =
     assetsFull.length > 0 ? assetsFull[assetsFull.length - 1] : 0;
   const lastFullBorrowingsValue =
@@ -717,8 +682,8 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     lastFullBorrowingsValue > 0
       ? lastFullNetWorthValue / lastFullBorrowingsValue
       : lastFullNetWorthValue > 0
-      ? 5
-      : 0;
+        ? 5
+        : 0;
 
   const radarData = {
     labels: [
@@ -752,7 +717,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     plugins: { legend: { display: false } },
   };
 
-  // Financial Ratios
   const ratios = [
     {
       label: "Debt to Equity",
@@ -777,8 +741,8 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
       value:
         lastFullAssetsValueForRadar > 0
           ? (liabilitiesFull[liabilitiesFull.length - 1] /
-              lastFullAssetsValueForRadar) *
-            100
+            lastFullAssetsValueForRadar) *
+          100
           : 0,
       format: (v) => `${v.toFixed(1)}%`,
       hint: "Total liabilities as percentage of assets.",
@@ -797,7 +761,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     },
   ];
 
-  // Year Compare (excluding TTM)
   const yearOptions = fullYearLabels;
   const [compareYearA, setCompareYearA] = useState(
     yearOptions.length >= 2
@@ -810,7 +773,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
       : yearOptions[0] || ""
   );
 
-  // Map full-year labels back to their actual indices in data
   const labelToFullYearIndex = fullYearLabels.reduce(
     (acc, label, idx) => {
       acc[label] = fullYearIndices[idx];
@@ -849,7 +811,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     return `${absStr} (${pctStr})`;
   };
 
-  // AI summaries for charts
   const aiAssetsTrendSummary = buildTrendSummary(yoyAssets, "Assets");
   const aiLiabilitiesTrendSummary = buildTrendSummary(
     yoyLiabilities,
@@ -880,13 +841,11 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
     ai?.summaries?.liabilities_composition &&
     buildTrendSummary(yoyLiabilities, "Liability mix");
 
-  // Which label to print in metrics → always last full-year if available
   const metricsAsOfLabel =
     fullYearLabels.length > 0
       ? fullYearLabels[fullYearLabels.length - 1]
       : years[years.length - 1];
 
-  // Arrows in metric cards (liabilities logic included)
   const arrowInfo = (change, isGoodWhenHigher = true) => {
     if (!isFinite(change)) return { symbol: "→", color: "text-gray-400" };
     if (Math.abs(change) < 0.5)
@@ -904,15 +863,35 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
   const arrowLiabilities = arrowInfo(lastYoYLiabilities, false);
   const arrowBorrowings = arrowInfo(lastYoYBorrowings, false);
 
-  // layout
   return (
     <div className="space-y-6">
-      {/* Summary */}
-      <SummaryPanel ai={ai} />
 
-      {/* Risk & Strength */}
+      {/* <div className="mt-2 text-sm font-semibold text-gray-700">
+        📊 Key Balance Sheet Metrics
+      </div> */}
+      <MetricCards
+        metricsAsOfLabel={metricsAsOfLabel}
+        equityRatioYoy={netWorthCagr - assetsCagr}
+        arrowEquityRatio={arrowInfo(netWorthCagr - assetsCagr, true)}
+        totalAssetsGrowth={totalAssetsGrowth}
+        equityRatioValue={equityRatio * 100}
+        arrowdeptToEquity={arrowInfo(borrowingsCagr - netWorthCagr, false)}
+        deptToEquityYoy={borrowingsCagr - netWorthCagr}
+        debtToEquity={debtToEquity}
+        arrowAssets={arrowAssets}
+        arrowBorrowings={arrowBorrowings}
+        arrowLiabilities={arrowLiabilities}
+        arrowNetWorth={arrowNetWorth}
+        borrowings={borrowings}
+        lastYoYAssets={lastYoYAssets}
+        lastYoYBorrowings={lastYoYBorrowings}
+        lastYoYLiabilities={lastYoYLiabilities}
+        lastYoYNetWorth={lastYoYNetWorth}
+        netWorthLatest={netWorthLatest}
+        totalLiabilities={totalLiabilities}
+        totalAssets={totalAssets}
+      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Risk Score Card */}
         <div
           className="bg-white rounded-lg border p-4 flex flex-col justify-between"
           style={{ borderColor: COLORS.border }}
@@ -937,20 +916,16 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             volatility patterns to estimate overall balance-sheet risk.
           </p>
 
-          {/* Reasons */}
           <ul className="mt-2 text-xs text-gray-600 list-disc ml-4">
             {risk.reasons.map((r, i) => (
               <li key={i}>{r}</li>
             ))}
           </ul>
 
-          {/* Forecast */}
           <p className="mt-2 text-[11px] text-gray-500 italic">
             📌 {risk.forecast}
           </p>
         </div>
-
-        {/* Financial Strength Gauge */}
         <div
           className="bg-white rounded-lg border p-4"
           style={{ borderColor: COLORS.border }}
@@ -971,14 +946,12 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
                 {gaugeScore >= 70
                   ? "Strong"
                   : gaugeScore >= 40
-                  ? "Moderate"
-                  : "Weak"}
+                    ? "Moderate"
+                    : "Weak"}
               </div>
             </div>
           </div>
         </div>
-
-        {/* Stability Rating */}
         <div
           className="bg-white rounded-lg border p-4 flex flex-col justify-between"
           style={{ borderColor: COLORS.border }}
@@ -991,35 +964,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
           <p className="mt-2 text-xs text-gray-600">{stability.text}</p>
         </div>
       </div>
-
-      {/* Section: Metrics */}
-      <div className="mt-2 text-sm font-semibold text-gray-700">
-        📊 Key Balance Sheet Metrics
-      </div>
-      <MetricCards
-        metricsAsOfLabel={metricsAsOfLabel}
-        equityRatioYoy={netWorthCagr - assetsCagr}
-        arrowEquityRatio={arrowInfo(netWorthCagr - assetsCagr, true)}
-        totalAssetsGrowth={totalAssetsGrowth}
-        equityRatioValue={equityRatio * 100}
-        arrowdeptToEquity={arrowInfo(borrowingsCagr - netWorthCagr, false)}
-        deptToEquityYoy={borrowingsCagr - netWorthCagr}
-        debtToEquity={debtToEquity}
-        arrowAssets={arrowAssets}
-        arrowBorrowings={arrowBorrowings}
-        arrowLiabilities={arrowLiabilities}
-        arrowNetWorth={arrowNetWorth}
-        borrowings={borrowings}
-        lastYoYAssets={lastYoYAssets}
-        lastYoYBorrowings={lastYoYBorrowings}
-        lastYoYLiabilities={lastYoYLiabilities}
-        lastYoYNetWorth={lastYoYNetWorth}
-        netWorthLatest={netWorthLatest}
-        totalLiabilities={totalLiabilities}
-        totalAssets={totalAssets}
-      />
-
-      {/* What Changed This Year */}
       {fullYearLabels.length >= 2 && (
         <div
           className="bg-white rounded-lg border p-4"
@@ -1085,15 +1029,15 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
                     <td className="px-2 py-1 text-right text-gray-600">
                       {row.diff
                         ? row.diff.a.toLocaleString(undefined, {
-                            maximumFractionDigits: 2,
-                          })
+                          maximumFractionDigits: 2,
+                        })
                         : "-"}
                     </td>
                     <td className="px-2 py-1 text-right text-gray-600">
                       {row.diff
                         ? row.diff.b.toLocaleString(undefined, {
-                            maximumFractionDigits: 2,
-                          })
+                          maximumFractionDigits: 2,
+                        })
                         : "-"}
                     </td>
                     <td className="px-2 py-1 text-right text-gray-800">
@@ -1106,13 +1050,18 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
           </div>
         </div>
       )}
-
-      {/* Section Title */}
+      <div>
+        <h2
+          className="text-xl font-semibold mb-3"
+          style={{ color: "#69b830" }}
+        >
+          Balance Sheet Summary
+        </h2>
+        <SummaryPanel ai={ai} />
+      </div>
       <div className="mt-4 text-sm font-semibold text-gray-700">
         📊 Main Trends Overview
       </div>
-
-      {/* MAIN CHARTS (core) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ChartCard
           title="Total Assets & Net Worth Trend"
@@ -1157,12 +1106,9 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             })
           }
         />
-
-        {/* Section Title inside grid */}
         <div className="md:col-span-2 text-sm font-semibold text-gray-700 mt-3">
           📘 Composition Breakdown
         </div>
-
         <ChartCard
           title="Assets Composition (Stacked)"
           result={ai?.summaries?.assets_composition}
@@ -1183,7 +1129,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             })
           }
         />
-
         <ChartCard
           title="Liabilities Composition (Stacked)"
           result={ai?.summaries?.liabilities_composition}
@@ -1206,11 +1151,9 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             })
           }
         />
-
         <div className="md:col-span-2 text-sm font-semibold text-gray-700 mt-3">
           💰 Solvency & Leverage Analysis
         </div>
-
         <ChartCard
           title="Net Worth vs Borrowings"
           result="Tracks long-term solvency strength and leverage control."
@@ -1237,7 +1180,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             })
           }
         />
-
         <ChartCard
           title="Solvency Gap (Assets – Liabilities)"
           result="Shows how much assets exceed liabilities."
@@ -1260,8 +1202,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
           }
         />
       </div>
-
-      {/* Financial Ratios */}
       <div className="mt-4 text-sm font-semibold text-gray-700">
         📈 Key Financial Ratios
       </div>
@@ -1269,7 +1209,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
         {ratios.map((r) => (
           <div
             key={r.label}
-            className="bg-white rounded-lg border p-4 transition-transform transition-shadow hover:shadow-md hover:-translate-y-[1px] hover:scale-[1.01]"
+            className="bg-white rounded-lg border p-4 transition-transform hover:shadow-md hover:-translate-y-[1px] hover:scale-[1.01]"
             style={{ borderColor: COLORS.border }}
           >
             <div className="text-xs font-semibold text-gray-700">
@@ -1285,8 +1225,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
           </div>
         ))}
       </div>
-
-      {/* Debt Quality Radar */}
       <div className="mt-4 text-sm font-semibold text-gray-700">
         🧭 Debt Quality Radar
       </div>
@@ -1302,21 +1240,15 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
           indicate healthier leverage quality.
         </p>
       </div>
-
-      {/* ADVANCED INSIGHTS TOGGLE */}
-      <div className="flex items-center justify-between mt-4">
-        <div className="text-sm font-semibold text-gray-700">
-          🧠 Advanced Insights & Analytics
+      {!showAdvanced && <div className="flex items-center w-full justify-center border border-[#D1D5DB] rounded-[5px] mt-4 hover:bg-gray-50 cursor-pointer" onClick={() => setShowAdvanced((s) => !s)}>
+        <div className="flex items-center gap-2">
+          <div
+            className="py-1.5 text-sm"
+          >
+            Show Advanced Insights ▼
+          </div>
         </div>
-        <button
-          onClick={() => setShowAdvanced((s) => !s)}
-          className="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
-        >
-          {showAdvanced ? "Hide Advanced Insights ▲" : "Show Advanced Insights ▼"}
-        </button>
-      </div>
-
-      {/* ADVANCED SECTION */}
+      </div>}
       {showAdvanced && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
@@ -1335,7 +1267,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
                 })
               }
             />
-
             <ChartCard
               title="Assets Breakdown (Latest Period)"
               result={ai?.summaries?.assets_breakdown}
@@ -1369,7 +1300,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
                 })
               }
             />
-
             <ChartCard
               title="Liabilities Breakdown (Latest Period)"
               result={ai?.summaries?.liabilities_breakdown}
@@ -1403,7 +1333,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
                 })
               }
             />
-
             <ChartCard
               title="Indexed (Base-100) Assets vs Liabilities vs Borrowings"
               result="Normalizes all metrics to compare growth direction."
@@ -1427,7 +1356,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
                 })
               }
             />
-
             <ChartCard
               title="CAGR Comparison (Long-Term Growth)"
               result="Compound annual growth of key financial metrics."
@@ -1449,105 +1377,103 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
                 })
               }
             />
-          </div>
-
-          {/* HEATMAP */}
-          <div className="mt-4 text-sm font-semibold text-gray-700">
-            🔥 YoY % Change Heatmap (Growth Only)
-          </div>
-          <div
-            className="bg-white rounded-lg border p-4"
-            style={{ borderColor: COLORS.border }}
-          >
-            <div className="overflow-auto">
-              <table className="min-w-full text-xs">
-                <thead>
-                  <tr className="text-left text-gray-600">
-                    <th className="px-2 py-1">Metric</th>
-                    {fullYearLabels.map((y) => (
-                      <th className="px-2 py-1 text-center" key={y}>
-                        {y}
-                      </th>
+            <div className="animation-border p-[2.2px]">
+              <div className="border border-[#D1D5DB] rounded-[10px] p-[20px] h-full w-full bg-white">
+                <div className="mb-3 text-lg font-medium text-gray-700">
+                  🧩 Comprehensive AI Signals
+                </div>
+                <div
+                  className="bg-white rounded-[10px]"
+                  style={{ borderColor: COLORS.border }}
+                >
+                  <p
+                    className="text-[14px] text-gray-700 mb-2"
+                    style={{ color: COLORS.secondaryText }}
+                  >
+                    {ai?.relationships?.[0]}
+                  </p>
+                  <ul
+                    className="text-[14px] list-disc ml-5"
+                    style={{ color: COLORS.secondaryText }}
+                  >
+                    {(ai?.recommendations || []).map((r, i) => (
+                      <li key={i}>{r}</li>
                     ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {heatmapRows.map((row) => (
-                    <tr key={row.label}>
-                      <td className="px-2 py-1 font-medium text-gray-700">
-                        {row.label}
-                      </td>
-                      {row.yoy.map((pctVal, i) =>
-                        i === 0 ? (
-                          <td
-                            key={i}
-                            className="px-2 py-1 text-gray-400 text-center"
-                          >
-                            —
-                          </td>
-                        ) : (
-                          <td key={i} className="px-1 py-1">
-                            <div
-                              className={`rounded text-center px-1 py-[2px] ${getHeatColor(
-                                pctVal
-                              )}`}
-                            >
-                              {pctVal.toFixed(1)}%
-                            </div>
-                          </td>
-                        )
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
+          <div>
+            <div className="mt-4 text-sm font-semibold text-gray-700">
+              🔥 YoY % Change Heatmap (Growth Only)
+            </div>
+            <div
+              className="bg-white rounded-lg border p-4"
+              style={{ borderColor: COLORS.border }}
+            >
+              <div className="overflow-auto">
+                <table className="min-w-full text-xs">
+                  <thead>
+                    <tr className="text-left text-gray-600">
+                      <th className="px-2 py-1">Metric</th>
+                      {fullYearLabels.map((y) => (
+                        <th className="px-2 py-1 text-center" key={y}>
+                          {y}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {heatmapRows.map((row) => (
+                      <tr key={row.label}>
+                        <td className="px-2 py-1 font-medium text-gray-700">
+                          {row.label}
+                        </td>
+                        {row.yoy.map((pctVal, i) =>
+                          i === 0 ? (
+                            <td
+                              key={i}
+                              className="px-2 py-1 text-gray-400 text-center"
+                            >
+                              —
+                            </td>
+                          ) : (
+                            <td key={i} className="px-1 py-1">
+                              <div
+                                className={`rounded text-center px-1 py-[2px] ${getHeatColor(
+                                  pctVal
+                                )}`}
+                              >
+                                {pctVal.toFixed(1)}%
+                              </div>
+                            </td>
+                          )
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {showAdvanced && <div className="flex items-center w-full justify-center border border-[#D1D5DB] rounded-[5px] mt-4 hover:bg-gray-50 cursor-pointer" onClick={() => setShowAdvanced((s) => !s)}>
+            <div className="flex items-center gap-2">
+              <div
+                className="py-1.5 text-sm"
+              >
+                Hide Advanced Insights ▲
+              </div>
+            </div>
+          </div>}
         </>
       )}
-
-      {/* Signals & recommendations */}
-      <div className="mb-3 text-sm font-semibold text-gray-700">
-        🧩 Comprehensive AI Signals
-      </div>
-      <div
-        className="bg-white rounded-[10px]"
-        style={{ borderColor: COLORS.border }}
-      >
-        <p
-          className="text-[14px] text-gray-700 mb-2"
-          style={{ color: COLORS.secondaryText }}
-        >
-          {ai?.relationships?.[0]}
-        </p>
-        <ul
-          className="text-[14px] list-disc ml-5"
-          style={{ color: COLORS.secondaryText }}
-        >
-          {(ai?.recommendations || []).map((r, i) => (
-            <li key={i}>{r}</li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Fullscreen Modal */}
       {fullscreenChart && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-xl w-[95vw] h-[90vh] p-4 flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-gray-700">
-                {fullscreenChart.title}
-              </h2>
-              <button
-                onClick={() => setFullscreenChart(null)}
-                className="cursor-pointer"
-              >
-                <RxCross2 />
-              </button>
-            </div>
-            <div className="flex-1">{fullscreenChart.chart}</div>
-          </div>
-        </div>
+        <FullScreenModal
+          title={fullscreenChart.title}
+          onClose={() => setFullscreenChart(null)}
+          chart={fullscreenChart.chart}
+        />
       )}
     </div>
   );
