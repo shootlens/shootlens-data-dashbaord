@@ -7,6 +7,7 @@ import {
   PiMathOperationsThin
 } from "react-icons/pi";
 import { FcComboChart } from "react-icons/fc";
+import Animate from "../../common/animate";
 
 const MetricCards = ({
   totalAssets,
@@ -30,6 +31,7 @@ const MetricCards = ({
   totalAssetsGrowth,
   metricsAsOfLabel
 }) => {
+
   return (
 
     <div className="flex flex-wrap gap-4">
@@ -91,45 +93,50 @@ const MetricCards = ({
           format: (v) => `${v.toFixed(1)}%`,
         },
       ].map((c, i) => (
+
         <div
           key={i}
           className="bg-white p-4 rounded-xl border min-w-[220px] flex-1 transition-transform transition-shadow hover:shadow-md hover:-translate-y-[1px] hover:scale-[1.01]"
           style={{ borderColor: COLORS.border }}
         >
-          <div className="flex items-center justify-between gap-[10px]">
-            <div className="flex items-center gap-[8px]">
-              <div className="h-7 w-7">{c.icon}</div>
-              <div className="text-sm text-gray-500">{c.label}</div>
-            </div>
-            {c.arrow && (
-              <div
-                className={`flex items-center text-[11px] font-semibold ${c.arrow.color}`}
-              >
-                {c.arrow.symbol}{" "}
-                <span className="ml-1">
-                  {isFinite(c.yoy)
-                    ? `${c.yoy >= 0 ? "+" : ""}${c.yoy.toFixed(1)}%`
-                    : "--"}
-                </span>
+          <Animate>
+            <div className="flex items-center justify-between gap-[10px]">
+              <div className="flex items-center gap-[8px]">
+                <div className="h-7 w-7">{c.icon}</div>
+                <div className="text-sm text-gray-500">{c.label}</div>
               </div>
-            )}
-          </div>
-          <div
-            className="text-2xl font-semibold mt-1"
-            style={{ color: COLORS.primary }}
-          >
-            {typeof c.value === "number"
-              ? c.format
-                ? c.format(c.value)
-                : c.value.toLocaleString(undefined, {
-                  maximumFractionDigits: 2,
-                })
-              : c.value}
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            As of {metricsAsOfLabel}
-          </div>
+              {c.arrow && (
+                <div
+                  className={`flex items-center text-[11px] font-semibold ${c.arrow.color}`}
+                >
+                  {c.arrow.symbol}{" "}
+                  <span className="ml-1">
+                    {isFinite(c.yoy)
+                      ? `${c.yoy >= 0 ? "+" : ""}${c.yoy.toFixed(1)}%`
+                      : "--"}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div
+              className="text-2xl font-semibold mt-1"
+              style={{ color: COLORS.primary }}
+            >
+              {typeof c.value === "number"
+                ? c.format
+                  ? c.format(c.value)
+                  : c.value.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                  })
+                : c.value}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              As of {metricsAsOfLabel}
+            </div>
+          </Animate>
         </div>
+
+
       ))}
     </div>
   );

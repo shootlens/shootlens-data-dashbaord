@@ -20,6 +20,7 @@ import MetricCards from "./metric-cards";
 import "../../../App.css";
 import SummaryPanel from "./summary";
 import FullScreenModal from "../../common/full-screen-modal";
+import Animate from "../../common/animate";
 
 ChartJS.register(
   CategoryScale,
@@ -865,10 +866,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
 
   return (
     <div className="space-y-6">
-
-      {/* <div className="mt-2 text-sm font-semibold text-gray-700">
-        📊 Key Balance Sheet Metrics
-      </div> */}
       <MetricCards
         metricsAsOfLabel={metricsAsOfLabel}
         equityRatioYoy={netWorthCagr - assetsCagr}
@@ -891,8 +888,9 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
         totalLiabilities={totalLiabilities}
         totalAssets={totalAssets}
       />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div
+        <Animate
           className="bg-white rounded-lg border p-4 flex flex-col justify-between"
           style={{ borderColor: COLORS.border }}
         >
@@ -925,10 +923,10 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
           <p className="mt-2 text-[11px] text-gray-500 italic">
             📌 {risk.forecast}
           </p>
-        </div>
-        <div
+        </Animate>
+        <Animate
           className="bg-white rounded-lg border p-4"
-          style={{ borderColor: COLORS.border }}
+          // style={{ borderColor: COLORS.border }}
         >
           <div className="text-sm font-semibold mb-1">
             💪 Financial Strength Gauge
@@ -951,10 +949,10 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
               </div>
             </div>
           </div>
-        </div>
-        <div
+        </Animate>
+        <Animate
           className="bg-white rounded-lg border p-4 flex flex-col justify-between"
-          style={{ borderColor: COLORS.border }}
+          // style={{ borderColor: COLORS.border }}
         >
           <div className="text-sm font-semibold mb-1">📉 Stability Rating</div>
           <div className="flex items-center gap-2 mt-1">
@@ -962,12 +960,12 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             <span className="font-semibold text-sm">{stability.title}</span>
           </div>
           <p className="mt-2 text-xs text-gray-600">{stability.text}</p>
-        </div>
+        </Animate>
       </div>
       {fullYearLabels.length >= 2 && (
-        <div
+        <Animate
           className="bg-white rounded-lg border p-4"
-          style={{ borderColor: COLORS.border }}
+          // style={{ borderColor: COLORS.border }}
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
@@ -1048,9 +1046,9 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
               </tbody>
             </table>
           </div>
-        </div>
+        </Animate>
       )}
-      <div>
+      <Animate>
         <h2
           className="text-xl font-semibold mb-3"
           style={{ color: "#69b830" }}
@@ -1058,7 +1056,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
           Balance Sheet Summary
         </h2>
         <SummaryPanel ai={ai} />
-      </div>
+      </Animate>
       <div className="mt-4 text-sm font-semibold text-gray-700">
         📊 Main Trends Overview
       </div>

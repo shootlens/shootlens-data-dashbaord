@@ -15,6 +15,7 @@ import {
 import "chartjs-adapter-date-fns";
 import { COLORS } from "../../../constants";
 import "../../../App.css"
+import Animate from "../../common/animate";
 
 ChartJS.register(
     CategoryScale,
@@ -539,100 +540,116 @@ const HistoricalDashboard = ({ historicalData = [] }) => {
 
     return (
         <div className="bg-white p-4 rounded-[10px] border border-gray-200 mb-6">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Historical Dashboard</h2>
-                <select className={`border rounded-[5px] px-2 py-1.5 text-sm`} value={timeframe} onChange={(e) => setTimeframe(e.target.value)}>
-                    <option value="day">Day</option>
-                    <option value="week">Week</option>
-                    <option value="month">Month</option>
-                    <option value="6months">6 Months</option>
-                    <option value="year">Year</option>
-                    <option value="overall">Overall</option>
-                </select>
-            </div>
-
-            <div
-                className={`p-2 rounded-md text-sm font-medium text-center mb-4 ${trendLabel.includes("Uptrend") ? "bg-green-100 text-green-700" : trendLabel.includes("Downtrend") ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"
-                    }`}
-            >
-                {trendLabel} ({timeframe.toUpperCase()})
-            </div>
+            <Animate className="flex-1">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-semibold">Historical Dashboard</h2>
+                    <select className={`border rounded-[5px] px-2 py-1.5 text-sm`} value={timeframe} onChange={(e) => setTimeframe(e.target.value)}>
+                        <option value="day">Day</option>
+                        <option value="week">Week</option>
+                        <option value="month">Month</option>
+                        <option value="6months">6 Months</option>
+                        <option value="year">Year</option>
+                        <option value="overall">Overall</option>
+                    </select>
+                </div>
+            </Animate>
+            <Animate className="flex-1">
+                <div
+                    className={`p-2 rounded-md text-sm font-medium text-center mb-4 ${trendLabel.includes("Uptrend") ? "bg-green-100 text-green-700" : trendLabel.includes("Downtrend") ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"
+                        }`}
+                >
+                    {trendLabel} ({timeframe.toUpperCase()})
+                </div>
+            </Animate>
 
             {/* Metric Cards Grid */}
             <div className="flex flex-wrap gap-5 mb-6">
                 {/* EMA Status */}
-                <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
-                    <div className="text-sm font-medium text-gray-500">EMA (9 / 20 / 50 / 200)</div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                        {[
-                            { p: "9", v: latestEma9 },
-                            { p: "20", v: latestEma20 },
-                            { p: "50", v: latestEma50 },
-                            { p: "200", v: latestEma200 },
-                        ].map((e, i) => {
-                            const status = latestClose == null || e.v == null ? "Neutral" : latestClose > e.v ? "Above" : latestClose < e.v ? "Below" : "Neutral";
-                            const color = status === "Above" ? "text-green-700" : status === "Below" ? "text-red-700" : "text-yellow-700";
-                            return (
-                                <div key={i} className={`text-sm font-semibold ${color}`}>
-                                    {e.p}: {status}
-                                </div>
-                            );
-                        })}
+                <Animate className="flex-1">
+                    <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
+                        <div className="text-sm font-medium text-gray-500">EMA (9 / 20 / 50 / 200)</div>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {[
+                                { p: "9", v: latestEma9 },
+                                { p: "20", v: latestEma20 },
+                                { p: "50", v: latestEma50 },
+                                { p: "200", v: latestEma200 },
+                            ].map((e, i) => {
+                                const status = latestClose == null || e.v == null ? "Neutral" : latestClose > e.v ? "Above" : latestClose < e.v ? "Below" : "Neutral";
+                                const color = status === "Above" ? "text-green-700" : status === "Below" ? "text-red-700" : "text-yellow-700";
+                                return (
+                                    <div key={i} className={`text-sm font-semibold ${color}`}>
+                                        {e.p}: {status}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="mt-2 text-xs font-medium">
+                            EMA alignment: {emaUp ? <span className="text-green-600">Bullish alignment</span> : emaDown ? <span className="text-red-600">Bearish alignment</span> : <span className="text-yellow-600">Mixed</span>}
+                        </div>
+                        <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">EMA shows momentum across multiple timeframes.</div>
                     </div>
-                    <div className="mt-2 text-xs font-medium">
-                        EMA alignment: {emaUp ? <span className="text-green-600">Bullish alignment</span> : emaDown ? <span className="text-red-600">Bearish alignment</span> : <span className="text-yellow-600">Mixed</span>}
-                    </div>
-                    <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">EMA shows momentum across multiple timeframes.</div>
-                </div>
+                </Animate>
 
                 {/* RSI Card */}
-                <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
-                    <div className="text-sm font-medium text-gray-500">RSI (14)</div>
-                    <div className={`text-xl font-semibold my-1 ${latestRSI != null ? (latestRSI > 70 ? "text-red-600" : latestRSI < 30 ? "text-green-600" : "text-yellow-600") : "text-gray-700"}`}>
-                        {latestRSI != null ? latestRSI.toFixed(2) : "—"}
+
+                <Animate className="flex-1">
+                    <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px]">
+                        <div className="text-sm font-medium text-gray-500">RSI (14)</div>
+                        <div className={`text-xl font-semibold my-1 ${latestRSI != null ? (latestRSI > 70 ? "text-red-600" : latestRSI < 30 ? "text-green-600" : "text-yellow-600") : "text-gray-700"}`}>
+                            {latestRSI != null ? latestRSI.toFixed(2) : "—"}
+                        </div>
+                        <div className={`text-sm ${latestRSI != null ? (latestRSI > 70 ? "text-red-600" : latestRSI < 30 ? "text-green-600" : "text-yellow-600") : "text-gray-600"}`}>
+                            {latestRSI != null ? (latestRSI > 70 ? "Overbought" : latestRSI < 30 ? "Oversold" : "Neutral") : "—"}
+                        </div>
+                        <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">Below 30 = Oversold, Above 70 = Overbought.</div>
                     </div>
-                    <div className={`text-sm ${latestRSI != null ? (latestRSI > 70 ? "text-red-600" : latestRSI < 30 ? "text-green-600" : "text-yellow-600") : "text-gray-600"}`}>
-                        {latestRSI != null ? (latestRSI > 70 ? "Overbought" : latestRSI < 30 ? "Oversold" : "Neutral") : "—"}
-                    </div>
-                    <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">Below 30 = Oversold, Above 70 = Overbought.</div>
-                </div>
+                </Animate>
 
                 {/* MACD Card */}
-                <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
-                    <div className="text-sm font-medium text-gray-500">MACD (12,26,9)</div>
-                    <div className={`text-xl font-semibold my-1 ${macdBullish ? "text-green-600" : macdBearish ? "text-red-600" : "text-yellow-600"}`}>
-                        {latestMACD != null ? latestMACD.toFixed(4) : "—"}
+                <Animate className="flex-1">
+                    <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
+                        <div className="text-sm font-medium text-gray-500">MACD (12,26,9)</div>
+                        <div className={`text-xl font-semibold my-1 ${macdBullish ? "text-green-600" : macdBearish ? "text-red-600" : "text-yellow-600"}`}>
+                            {latestMACD != null ? latestMACD.toFixed(4) : "—"}
+                        </div>
+                        <div className={`text-sm ${macdBullish ? "text-green-600" : macdBearish ? "text-red-600" : "text-gray-600"}`}>
+                            {latestMACD != null && latestSignal != null ? (latestMACD > latestSignal ? "Bullish" : latestMACD < latestSignal ? "Bearish" : "Neutral") : "—"}
+                        </div>
+                        <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">MACD {`>`} Signal = bullish momentum.</div>
                     </div>
-                    <div className={`text-sm ${macdBullish ? "text-green-600" : macdBearish ? "text-red-600" : "text-gray-600"}`}>
-                        {latestMACD != null && latestSignal != null ? (latestMACD > latestSignal ? "Bullish" : latestMACD < latestSignal ? "Bearish" : "Neutral") : "—"}
-                    </div>
-                    <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">MACD {`>`} Signal = bullish momentum.</div>
-                </div>
+                </Animate>
 
                 {/* Volatility Card */}
-                <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
-                    <div className="text-sm font-medium text-gray-500">Volatility (σ)</div>
-                    <div className="text-xl font-semibold my-1">{(volatility * 100).toFixed(2)}%</div>
-                    <div className={`text-sm ${volatility * 100 < 2 ? "text-yellow-600" : "text-red-600"}`}>{volatility * 100 < 1 ? "Low" : volatility * 100 < 2 ? "Medium" : "High"}</div>
-                    <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">Standard deviation of returns (higher = more movement).</div>
-                </div>
+                <Animate className="flex-1">
+                    <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
+                        <div className="text-sm font-medium text-gray-500">Volatility (σ)</div>
+                        <div className="text-xl font-semibold my-1">{(volatility * 100).toFixed(2)}%</div>
+                        <div className={`text-sm ${volatility * 100 < 2 ? "text-yellow-600" : "text-red-600"}`}>{volatility * 100 < 1 ? "Low" : volatility * 100 < 2 ? "Medium" : "High"}</div>
+                        <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">Standard deviation of returns (higher = more movement).</div>
+                    </div>
+                </Animate>
 
                 {/* Avg Volume Card */}
-                <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
-                    <div className="text-sm font-medium text-gray-500">Avg Volume (30 days)</div>
-                    <div className="text-xl font-semibold my-1">{avgVol30 ? Number(avgVol30).toLocaleString() : "—"}</div>
-                    <div className={`text-sm ${avgVol30 > 50000 ? "text-green-600" : "text-red-600"}`}>{avgVol30 > 50000 ? "High" : "Low"}</div>
-                    <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">Higher volume indicates better liquidity.</div>
-                </div>
+                <Animate className="flex-1">
+                    <div className="bg-white p-4 rounded-[10px] border border-gray-200 min-w-[220px] flex-1">
+                        <div className="text-sm font-medium text-gray-500">Avg Volume (30 days)</div>
+                        <div className="text-xl font-semibold my-1">{avgVol30 ? Number(avgVol30).toLocaleString() : "—"}</div>
+                        <div className={`text-sm ${avgVol30 > 50000 ? "text-green-600" : "text-red-600"}`}>{avgVol30 > 50000 ? "High" : "Low"}</div>
+                        <div className="mt-2 text-[11px] border-t border-gray-200 pt-1 text-gray-500">Higher volume indicates better liquidity.</div>
+                    </div>
+                </Animate>
             </div>
 
             {/* AI Insights */}
-            <div className="animation-border p-[2px] rounded-[13px]">
-                <div className="p-[10px] shadow-sm shadow-blue-300 rounded-[12px] bg-white" style={{ borderColor: COLORS.border }}>
-                    <h3 className="text-lg font-semibold mb-3" style={{ color: COLORS.titleText }}>📊 Insights</h3>
-                    <ul>{renderedInsights}</ul>
+            <Animate className="flex-1">
+                <div className="animation-border p-[2px] rounded-[13px]">
+                    <div className="p-[10px] shadow-sm shadow-blue-300 rounded-[12px] bg-white" style={{ borderColor: COLORS.border }}>
+                        <h3 className="text-lg font-semibold mb-3" style={{ color: COLORS.titleText }}>📊 Insights</h3>
+                        <ul>{renderedInsights}</ul>
+                    </div>
                 </div>
-            </div>
+            </Animate>
         </div>
     );
 };

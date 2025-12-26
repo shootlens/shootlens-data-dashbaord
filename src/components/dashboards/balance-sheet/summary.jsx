@@ -1,4 +1,5 @@
 import { COLORS } from "../../../constants";
+import Animate from "../../common/animate";
 
 const SummaryPanel = ({ ai }) => {
     if (!ai) return null;
@@ -12,7 +13,7 @@ const SummaryPanel = ({ ai }) => {
         healthScore >= 75 ? "#059669" : healthScore >= 50 ? "#f59e0b" : "#ef4444";
 
     return (
-        <div className="p-[2px] rounded-[13px] animation-border">
+        <Animate className="p-[2px] rounded-[13px] animation-border">
             <div
                 className="bg-white rounded-[12px] p-4"
                 style={{ borderColor: COLORS.border }}
@@ -72,7 +73,7 @@ const SummaryPanel = ({ ai }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Animate>
     );
 };
 export default SummaryPanel;

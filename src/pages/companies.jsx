@@ -6,6 +6,7 @@ import { COLORS } from "../constants";
 import { RiSlashCommands2 } from "react-icons/ri";
 import { BsCommand } from "react-icons/bs";
 import { TbLetterKSmall } from "react-icons/tb";
+import ImgLogo from "../assets/bull-vector.png"
 
 
 const Companies = () => {
@@ -156,7 +157,9 @@ const Companies = () => {
       <div>
         <div className="hidden md:block">
           <div className="flex items-center justify-center bg-gradient-to-r from-[rgb(251,251,251)] via-[rgb(206,220,244)] to-[rgb(213,225,244)] h-[94vh] relative">
-            <div className="absolute top-[35%]">
+            <div className="absolute top-[22%] flex items-center flex-col">
+                     <img src={ImgLogo} className="h-[200px] flex justify-center w-[200px]"/>
+       
               <div className="lg:text-7xl md:text-7xl text-[32px] font-semibold text-center flex flex-wrap justify-center text-[#28385e]">
                 <div>From Data to</div>
                 <Typewriter words={["Decisions..", "Insights..", "Growth.."]} />
@@ -248,7 +251,7 @@ const Companies = () => {
           </div>
         </div>
         <div className="text-[12px] text-[#6B7280] font-normal leading-normal py-4 px-10">
-          Made With 💚 by Ragava
+          Made With 💚 by Raghavendra
         </div>
       </div>
     </div>
