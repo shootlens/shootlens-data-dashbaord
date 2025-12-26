@@ -1,4 +1,5 @@
 import { COLORS } from "../../../constants";
+import Animate from "../../common/animate";
 import ResultPanel from "./result-panel";
 import { MdOpenInFull } from "react-icons/md"
 
@@ -40,7 +41,7 @@ const ChartCard = ({
     </div>
   );
   return (
-    <div
+    <Animate
       className="bg-white rounded-lg border p-4 flex flex-col"
       style={{ borderColor: COLORS.border }}
     >
@@ -68,7 +69,7 @@ const ChartCard = ({
       )}
       <div className="mt-3 h-56">{chart}</div>
       <InsightList list={insights} />
-    </div>
+    </Animate>
   )
 };
 

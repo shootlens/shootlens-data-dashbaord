@@ -13,6 +13,7 @@ import { Bar, Line } from "react-chartjs-2";
 import { COLORS } from "../constants";
 import { MdOpenInFull } from "react-icons/md"
 import FullScreenModal from "./common/full-screen-modal";
+import Animate from "./common/animate";
 
 
 ChartJS.register(
@@ -1148,7 +1149,7 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
           }
         />
         <div>
-          <div
+          <Animate
             className="bg-white rounded-[10px] border p-4 overflow-x-auto"
             style={{ borderColor: COLORS.border }}
           >
@@ -1183,7 +1184,7 @@ const QuarterlyResultsDashboard = ({ quarterlyData, quarterlyHoldingData }) => {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Animate>
         </div>
       </div>
       {fullscreenChart && (
@@ -1205,7 +1206,7 @@ const ChartCard = ({
   insights = [],
   onFullscreen,
 }) => (
-  <div
+  <Animate
     className="bg-white rounded-[10px] border p-4 flex flex-col"
     style={{ borderColor: COLORS.border }}
   >
@@ -1253,7 +1254,7 @@ const ChartCard = ({
         </ul>
       </div>
     )}
-  </div>
+  </Animate>
 );
 
 export default QuarterlyResultsDashboard;

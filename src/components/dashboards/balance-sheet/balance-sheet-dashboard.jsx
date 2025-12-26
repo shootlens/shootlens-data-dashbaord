@@ -926,7 +926,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
         </Animate>
         <Animate
           className="bg-white rounded-lg border p-4"
-          // style={{ borderColor: COLORS.border }}
+          style={{ borderColor: COLORS.border }}
         >
           <div className="text-sm font-semibold mb-1">
             💪 Financial Strength Gauge
@@ -952,7 +952,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
         </Animate>
         <Animate
           className="bg-white rounded-lg border p-4 flex flex-col justify-between"
-          // style={{ borderColor: COLORS.border }}
+          style={{ borderColor: COLORS.border }}
         >
           <div className="text-sm font-semibold mb-1">📉 Stability Rating</div>
           <div className="flex items-center gap-2 mt-1">
@@ -965,7 +965,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
       {fullYearLabels.length >= 2 && (
         <Animate
           className="bg-white rounded-lg border p-4"
-          // style={{ borderColor: COLORS.border }}
+          style={{ borderColor: COLORS.border }}
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
@@ -1081,7 +1081,6 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             })
           }
         />
-
         <ChartCard
           title="Liabilities & Borrowings Trend"
           result={ai?.summaries?.total_liabilities}
@@ -1127,6 +1126,7 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             })
           }
         />
+
         <ChartCard
           title="Liabilities Composition (Stacked)"
           result={ai?.summaries?.liabilities_composition}
@@ -1149,9 +1149,12 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             })
           }
         />
+
         <div className="md:col-span-2 text-sm font-semibold text-gray-700 mt-3">
           💰 Solvency & Leverage Analysis
         </div>
+
+
         <ChartCard
           title="Net Worth vs Borrowings"
           result="Tracks long-term solvency strength and leverage control."
@@ -1178,6 +1181,8 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             })
           }
         />
+
+
         <ChartCard
           title="Solvency Gap (Assets – Liabilities)"
           result="Shows how much assets exceed liabilities."
@@ -1205,48 +1210,55 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {ratios.map((r) => (
-          <div
-            key={r.label}
-            className="bg-white rounded-lg border p-4 transition-transform hover:shadow-md hover:-translate-y-[1px] hover:scale-[1.01]"
-            style={{ borderColor: COLORS.border }}
-          >
-            <div className="text-xs font-semibold text-gray-700">
-              {r.label}
-            </div>
+          <Animate>
             <div
-              className="text-xl font-semibold mt-1"
-              style={{ color: COLORS.primary }}
+              key={r.label}
+              className="bg-white rounded-lg border p-4 transition-transform hover:shadow-md hover:-translate-y-[1px] hover:scale-[1.01]"
+              style={{ borderColor: COLORS.border }}
             >
-              {isFinite(r.value) ? r.format(r.value) : "--"}
+              <div className="text-xs font-semibold text-gray-700">
+                {r.label}
+              </div>
+              <div
+                className="text-xl font-semibold mt-1"
+                style={{ color: COLORS.primary }}
+              >
+                {isFinite(r.value) ? r.format(r.value) : "--"}
+              </div>
+              <div className="text-[11px] text-gray-500 mt-1">{r.hint}</div>
             </div>
-            <div className="text-[11px] text-gray-500 mt-1">{r.hint}</div>
-          </div>
+          </Animate>
         ))}
       </div>
       <div className="mt-4 text-sm font-semibold text-gray-700">
         🧭 Debt Quality Radar
       </div>
-      <div
-        className="bg-white rounded-lg border p-2"
-        style={{ borderColor: COLORS.border }}
-      >
-        <div style={{ height: "calc(100vh - 63vh)" }}>
-          <Radar data={radarData} options={radarOptions} />
-        </div>
-        <p className="mt-2 text-[11px] text-gray-600 px-4">
-          Higher net worth-to-debt and lower debt percentages vs assets
-          indicate healthier leverage quality.
-        </p>
-      </div>
-      {!showAdvanced && <div className="flex items-center w-full justify-center border border-[#D1D5DB] rounded-[5px] mt-4 hover:bg-gray-50 cursor-pointer" onClick={() => setShowAdvanced((s) => !s)}>
-        <div className="flex items-center gap-2">
-          <div
-            className="py-1.5 text-sm"
-          >
-            Show Advanced Insights ▼
+      <Animate>
+        <div
+          className="bg-white rounded-lg border p-2"
+          style={{ borderColor: COLORS.border }}
+        >
+          <div style={{ height: "calc(100vh - 63vh)" }}>
+            <Radar data={radarData} options={radarOptions} />
           </div>
+          <p className="mt-2 text-[11px] text-gray-600 px-4">
+            Higher net worth-to-debt and lower debt percentages vs assets
+            indicate healthier leverage quality.
+          </p>
         </div>
-      </div>}
+      </Animate>
+      {!showAdvanced &&
+        <Animate>
+          <div className="flex items-center w-full justify-center border border-[#D1D5DB] rounded-[5px] mt-4 hover:bg-gray-50 cursor-pointer" onClick={() => setShowAdvanced((s) => !s)}>
+            <div className="flex items-center gap-2">
+              <div
+                className="py-1.5 text-sm"
+              >
+                Show Advanced Insights ▼
+              </div>
+            </div>
+          </div>
+        </Animate>}
       {showAdvanced && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
@@ -1403,10 +1415,10 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
             </div>
           </div>
           <div>
-            <div className="mt-4 text-sm font-semibold text-gray-700">
+            <div className="my-4 text-sm font-semibold text-gray-700">
               🔥 YoY % Change Heatmap (Growth Only)
             </div>
-            <div
+            <Animate
               className="bg-white rounded-lg border p-4"
               style={{ borderColor: COLORS.border }}
             >
@@ -1453,17 +1465,21 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </Animate>
           </div>
-          {showAdvanced && <div className="flex items-center w-full justify-center border border-[#D1D5DB] rounded-[5px] mt-4 hover:bg-gray-50 cursor-pointer" onClick={() => setShowAdvanced((s) => !s)}>
-            <div className="flex items-center gap-2">
-              <div
-                className="py-1.5 text-sm"
-              >
-                Hide Advanced Insights ▲
+          {showAdvanced &&
+            <Animate>
+              <div className="flex items-center w-full justify-center border border-[#D1D5DB] rounded-[5px] mt-4 hover:bg-gray-50 cursor-pointer" onClick={() => setShowAdvanced((s) => !s)}>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="py-1.5 text-sm"
+                  >
+                    Hide Advanced Insights ▲
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>}
+            </Animate>
+          }
         </>
       )}
       {fullscreenChart && (

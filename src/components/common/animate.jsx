@@ -6,7 +6,8 @@ const Animate = ({
     y = 30,
     duration = 0.4,
     delay = 0,
-    className = ''
+    className = '',
+    style = {}
 }) => {
     const ref = useRef(null);
     const inView = useInView(ref, {
@@ -16,6 +17,7 @@ const Animate = ({
     return (
         <motion.div
             className={className}
+            style={style}
             ref={ref}
             animate={
                 inView
