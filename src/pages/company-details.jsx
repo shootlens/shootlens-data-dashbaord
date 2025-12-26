@@ -217,7 +217,7 @@ const CompanyDetails = () => {
           }
         />
 
-        <Animate>
+        <Animate className="mt-4">
           <HistoricalDashboard historicalData={historicalData} />
         </Animate>
 

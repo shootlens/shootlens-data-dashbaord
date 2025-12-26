@@ -13,6 +13,7 @@ import {
     Filler,
 } from "chart.js";
 import { Doughnut, Line, Bar } from "react-chartjs-2";
+import Animate from "./common/animate";
 
 ChartJS.register(
     CategoryScale,
@@ -217,45 +218,45 @@ const ShareholdingCharts = ({ data }) => {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {compositionData && (
-                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
+                <Animate className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
                     <h2 className="text-lg font-semibold mb-4">Shareholding Composition</h2>
                     <div className="h-80">
                         <Doughnut data={compositionData} options={baseOptions} />
                     </div>
-                </div>
+                </Animate>
             )}
 
             {trendData && (
-                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
+                <Animate className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
                     <h2 className="text-lg font-semibold mb-4">Shareholding Trend</h2>
                     <div className="h-80">
                         <Line data={trendData} options={baseOptions} />
                     </div>
-                </div>
+                </Animate>
             )}
 
             {institutionalData && (
-                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
+                <Animate className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
                     <h2 className="text-lg font-semibold mb-4">
                         Institutional vs Non-Institutional Ownership (%)
                     </h2>
                     <div className="h-80">
                         <Bar data={institutionalData} options={baseOptions} />
                     </div>
-                </div>
+                </Animate>
             )}
 
             {promoterTrendData && (
-                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
+                <Animate className="bg-white p-6 rounded-[10px] h-[400px] border" style={{ borderColor: "#D1D5DB" }}>
                     <h2 className="text-lg font-semibold mb-4">Promoter Shareholding Trend</h2>
                     <div className="h-80">
                         <Line data={promoterTrendData} options={baseOptions} />
                     </div>
-                </div>
+                </Animate>
             )}
 
             {shareholdersData && (
-                <div className="bg-white p-6 rounded-[10px] h-[400px] border" style={{borderColor:"#D1D5DB"}}>
+                <Animate className="bg-white p-6 rounded-[10px] h-[400px] border" style={{borderColor:"#D1D5DB"}}>
                     <div className="flex items-center justify-between mb-3">
                         <h2 className="text-lg font-semibold">Number of Shareholders</h2>
                         {retailSentimentChart && (
@@ -279,7 +280,7 @@ const ShareholdingCharts = ({ data }) => {
                     <div className="h-80">
                         <Line data={shareholdersData} options={baseOptions} />
                     </div>
-                </div>
+                </Animate>
             )}
         </div>
     );

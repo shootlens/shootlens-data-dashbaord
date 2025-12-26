@@ -15,6 +15,7 @@ import { Line, Bar } from "react-chartjs-2";
 import { COLORS } from "../constants";
 import FullScreenModal from "./common/full-screen-modal";
 import { MdOpenInFull } from "react-icons/md";
+import Animate from "./common/animate";
 
 
 
@@ -233,7 +234,7 @@ const ProfitLossDashboard = ({ profitLossData = [] }) => {
 };
 
 const ChartCard = ({ title, children, onFullscreen }) => (
-    <div
+    <Animate
         className="bg-white rounded-2xl border p-4 h-96 relative"
         style={{ borderColor: COLORS.border }}
     >
@@ -250,7 +251,7 @@ const ChartCard = ({ title, children, onFullscreen }) => (
         </div>
 
         <div className="h-80">{children}</div>
-    </div>
+    </Animate>
 );
 
 

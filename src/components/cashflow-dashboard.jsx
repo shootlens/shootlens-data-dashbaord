@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,6 +13,7 @@ import {
 import { Bar, Line } from "react-chartjs-2";
 import { COLORS } from "../constants";
 import generateCashflowInsights from "../utils/nlpCashflow";
+import Animate from "./common/animate";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend, Filler);
 
@@ -69,7 +70,7 @@ const ChartCard = ({ title, chart, result, takeaway, insights, pct }) => {
   const colorClass = getColorClassForPct(pct);
 
   return (
-    <div className={`bg-white rounded-[10px] border p-4`} style={{ borderColor: COLORS.border }}>
+    <Animate className={`bg-white rounded-[10px] border p-4`} style={{ borderColor: COLORS.border }}>
       <h3 className="text-lg font-medium mb-1 text-gray-700">{title}</h3>
 
       {/* Result (color-coded) */}
@@ -100,7 +101,7 @@ const ChartCard = ({ title, chart, result, takeaway, insights, pct }) => {
           {(insights || []).length === 0 && <li>No insights available</li>}
         </ul>
       </div>
-    </div>
+    </Animate>
   );
 };
 
