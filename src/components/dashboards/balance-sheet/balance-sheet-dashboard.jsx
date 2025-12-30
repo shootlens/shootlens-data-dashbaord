@@ -1209,10 +1209,9 @@ const BalanceSheetDashboard = ({ balance_sheet }) => {
         📈 Key Financial Ratios
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {ratios.map((r) => (
-          <Animate>
+        {ratios.map((r, index) => (
+          <Animate key={index}>
             <div
-              key={r.label}
               className="bg-white rounded-lg border p-4 transition-transform hover:shadow-md hover:-translate-y-[1px] hover:scale-[1.01]"
               style={{ borderColor: COLORS.border }}
             >

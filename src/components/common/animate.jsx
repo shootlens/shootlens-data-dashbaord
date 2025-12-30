@@ -3,8 +3,8 @@ import { useRef } from "react";
 
 const Animate = ({
     children,
-    y = 30,
-    duration = 0.4,
+    y = 10,
+    duration = 0.3,
     delay = 0,
     className = '',
     style = {}

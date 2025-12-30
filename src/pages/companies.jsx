@@ -207,7 +207,7 @@ const Companies = () => {
               </span>
             </div>
           </div>
-          <div className="h-[79vh] overflow-y-auto" style={{ borderColor: COLORS.border }}>
+          <div className="overflow-y-auto" style={{ borderColor: COLORS.border, height:"calc(100vh - 116px)" }}>
             <table className="table-auto border w-full">
               <thead className="border-b bg-gray-100 overflow-hidden" style={{ borderColor: COLORS.border }}>
                 <tr>

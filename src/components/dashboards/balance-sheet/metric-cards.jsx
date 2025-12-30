@@ -93,13 +93,11 @@ const MetricCards = ({
           format: (v) => `${v.toFixed(1)}%`,
         },
       ].map((c, i) => (
-
-        <div
-          key={i}
-          className="bg-white p-4 rounded-xl border min-w-[220px] flex-1 transition-transform transition-shadow hover:shadow-md hover:-translate-y-[1px] hover:scale-[1.01]"
-          style={{ borderColor: COLORS.border }}
-        >
-          <Animate>
+        <Animate className="min-w-[220px] flex-1" key={i}>
+          <div
+            className="bg-white p-4 rounded-xl border transition-transform transition-shadow hover:shadow-md hover:-translate-y-[1px] hover:scale-[1.01]"
+            style={{ borderColor: COLORS.border }}
+          >
             <div className="flex items-center justify-between gap-[10px]">
               <div className="flex items-center gap-[8px]">
                 <div className="h-7 w-7">{c.icon}</div>
@@ -133,10 +131,8 @@ const MetricCards = ({
             <div className="text-xs text-gray-500 mt-1">
               As of {metricsAsOfLabel}
             </div>
-          </Animate>
-        </div>
-
-
+          </div>
+        </Animate>
       ))}
     </div>
   );

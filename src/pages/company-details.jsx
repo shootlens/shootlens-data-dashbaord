@@ -77,7 +77,6 @@ const Section = ({ title, show, onToggle, table, chart }) => (
    Constants
 ===================================================== */
 const COUNTDOWN_SECONDS = 60;
-
 const importantMetrics = [
   { key: "Current Price", icon: <GiPriceTag color={COLORS.icon} /> },
   { key: "Market Cap", icon: <FiBarChart2 color={COLORS.icon} /> },
@@ -97,7 +96,16 @@ const CompanyDetails = () => {
   const [historicalData, setHistoricalData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [count, setCount] = useState(COUNTDOWN_SECONDS);
+
+  const getRemainingSeconds = (endTime) => {
+    if (!endTime) return COUNTDOWN_SECONDS;
+    const remaining = Math.floor((Number(endTime) - Date.now()) / 1000);
+    return remaining > 0 ? remaining : 0;
+  };
+  const [count, setCount] = useState(() => {
+    const savedEndTime = localStorage.getItem(`countdown_end_${symbol}`);
+    return getRemainingSeconds(savedEndTime);
+  });
 
   const [view, setView] = useState({
     qr: true,
@@ -107,6 +115,7 @@ const CompanyDetails = () => {
     cf: true,
     ratios: true,
   });
+    const [isDashboardMode, setIsDashboardMode] = useState(true);
 
   const toggle = (key) =>
     setView((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -135,22 +144,91 @@ const CompanyDetails = () => {
     loadData();
   }, [symbol]);
 
+
+  const isApiLimited =
+    !loading && company && company.data === undefined;
+
+  useEffect(() => {
+    if (!loading && company?.data) {
+      localStorage.removeItem(`countdown_end_${symbol}`);
+      localStorage.removeItem(`refreshed_once_${symbol}`);
+      setCount(COUNTDOWN_SECONDS);
+      return;
+    }
+
+    if (!isApiLimited) return;
+
+    let endTime = localStorage.getItem(`countdown_end_${symbol}`);
+
+    if (!endTime) {
+      endTime = Date.now() + COUNTDOWN_SECONDS * 1000;
+      localStorage.setItem(`countdown_end_${symbol}`, endTime);
+    }
+
+    setCount(getRemainingSeconds(endTime));
+
+    const timer = setInterval(() => {
+      const remaining = getRemainingSeconds(endTime);
+      setCount(remaining);
+
+      if (remaining <= 0) {
+        clearInterval(timer);
+        localStorage.removeItem(`countdown_end_${symbol}`);
+
+        const refreshed = localStorage.getItem(`refreshed_once_${symbol}`);
+        if (!refreshed) {
+          localStorage.setItem(`refreshed_once_${symbol}`, "1");
+          window.location.reload();
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [symbol, loading, company, isApiLimited]);
   if (loading) return <Loader />;
-  if (error) return <div className="text-center text-red-600">{error}</div>;
+  if (error)
+    return <div className="text-center text-red-600">{error}</div>;
+
+  if (!company?.data) {
+    const progress =
+      ((COUNTDOWN_SECONDS - count) / COUNTDOWN_SECONDS) * 100;
+
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen px-6">
+        <h1 className="text-3xl font-semibold text-gray-600 mb-4">
+          API Limit Reached
+        </h1>
+
+        <div className="w-full max-w-md bg-gray-200 rounded-full h-3 overflow-hidden mb-3">
+          <div
+            className="h-3 bg-blue-600 transition-all"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+
+        <p className="text-lg text-gray-500">
+          Refreshing in <b>{count}s</b>
+        </p>
+      </div>
+    );
+  }
   if (!company?.data) return null;
 
   const financials = company.data;
 
+
   return (
     <div className="pb-6">
-      <Header  hideCount
+      <Header hideCount
         children={
           <button
             onClick={() => {
+              setIsDashboardMode(!isDashboardMode)
               const newState = Object.fromEntries(
                 Object.entries(view).map(([k, v]) => [k, !v])
               );
               setView(newState);
+
             }}
             className="px-[6px] py-[3px] text-[14px] font-medium rounded border cursor-pointer"
             style={{
@@ -158,12 +236,11 @@ const CompanyDetails = () => {
               borderColor: COLORS.border,
             }}
           >
-            {view.dashboard ? "📊 Dashboard Mode" : "📋 Table Mode"}
+            {isDashboardMode ? "📊 Dashboard Mode" : "📋 Table Mode"}
           </button>
         } />
 
       <div className="md:px-6 pt-6 px-3">
-        {/* Company Header */}
         <Animate>
           <h1
             className="text-2xl font-bold mb-3"
@@ -179,8 +256,6 @@ const CompanyDetails = () => {
             {financials.about}
           </p>
         </Animate>
-
-        {/* Metrics */}
         <div className="pt-4">
           <div
             className="sm:flex flex-wrap gap-4 sm:justify-around rounded-[10px] mt-2 border"
@@ -203,8 +278,6 @@ const CompanyDetails = () => {
             )}
           </div>
         </div>
-
-        {/* Sections */}
         <Section
           title="Balance Sheet"
           show={view.bs}
@@ -272,8 +345,6 @@ const CompanyDetails = () => {
             />
           }
         />
-
-        {/* Footer */}
         <Animate>
           <p className="text-xs text-gray-400 mt-4">
             Last Updated:{" "}
