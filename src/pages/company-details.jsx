@@ -26,6 +26,7 @@ import {
 import { GiPriceTag } from "react-icons/gi";
 import { motion } from "framer-motion";
 import Animate from "../components/common/animate";
+import SplashCursor from "../components/SplashCursor"
 /* =====================================================
    Loader
 ===================================================== */
@@ -219,6 +220,7 @@ const CompanyDetails = () => {
 
   return (
     <div className="pb-6">
+      <SplashCursor/>
       <Header hideCount
         children={
           <button

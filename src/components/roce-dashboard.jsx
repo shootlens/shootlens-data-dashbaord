@@ -1,4 +1,3 @@
-// src/components/ROCEDashboard.jsx
 import React, { useMemo } from "react";
 import {
   Chart as ChartJS,
@@ -21,7 +20,7 @@ ChartJS.register(
 );
 
 const ROCEDashboard = ({ ratios }) => {
-  /* ---------------- Parse ROCE Data (ROBUST) ---------------- */
+
   const roceData = useMemo(() => {
     if (!Array.isArray(ratios) || ratios.length === 0)
       return { labels: [], data: [] };
@@ -43,13 +42,11 @@ const ROCEDashboard = ({ ratios }) => {
       return parseFloat(String(v).replace(/[% ,]/g, ""));
     });
 
-    // Generate fallback labels safely
     const labels = rawValues.map((_, i) => `Year ${i + 1}`);
 
     return { labels, data };
   }, [ratios]);
 
-  /* ---------------- Analytics ---------------- */
   const analytics = useMemo(() => {
     const valid = roceData.data.filter(
       (v) => v !== null && !isNaN(v)
@@ -119,7 +116,6 @@ const ROCEDashboard = ({ ratios }) => {
     };
   }, [roceData]);
 
-  /* ---------------- Chart ---------------- */
   const chartData = {
     labels: roceData.labels,
     datasets: [
@@ -161,14 +157,14 @@ const ROCEDashboard = ({ ratios }) => {
 
       <div className="mt-6 space-y-3">
         <p>
-          <strong>Volatility:</strong>{" "}
+          <strong>Volatility:</strong>
           <span className={analytics.volatilityColor}>
             {analytics.volatility}
           </span>
         </p>
 
         <p>
-          <strong>Confidence Score:</strong>{" "}
+          <strong>Confidence Score:</strong>
           {analytics.confidence}%
         </p>
 
