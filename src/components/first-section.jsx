@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ImgLogo from "../assets/bull-vector.png"
-import SplashCursor from "./SplashCursor";
+// import SplashCursor from "./SplashCursor";
 
 const FirstSection = () => {
     const Typewriter = ({ words, typingSpeed = 120, deletingSpeed = 70, delay = 1200 }) => {
@@ -38,7 +38,7 @@ const FirstSection = () => {
     return (
         <>
             <div className="relative">
-                <SplashCursor/>
+                {/* <SplashCursor/> */}
                 <div className="hidden md:block">
                 <div className="flex items-center justify-center bg-gradient-to-r from-[rgb(251,251,251)] via-[rgb(206,220,244)] to-[rgb(213,225,244)] h-[94vh] relative">
                     <div className="absolute top-[22%] flex items-center flex-col">
